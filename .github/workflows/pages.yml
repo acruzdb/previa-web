@@ -17,3 +17,9 @@ jobs:
         with: { path: '.' }
       - id: d
         uses: actions/deploy-pages@v4
+      - name: Comprobar que la página responde
+        run: |
+          sleep 20
+          for f in "" remote.html relay.js style.css avatars.js remote.js i18n.js; do
+            c=$(curl -s -o /dev/null -w "%{http_code}" "${{ steps.d.outputs.page_url }}$f"); echo "$c $f"; [ "$c" = 200 ]
+          done
