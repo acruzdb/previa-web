@@ -38,7 +38,7 @@ window.NetTriv=(function(){
       ctx.spin=st.spin.id;
     }
     if(st.last&&st.last.id!==ctx.lastMsg){ctx.lastMsg=st.last.id;const m=$(".nt-msg");m.textContent=st.last.text;m.className="nt-msg show "+(st.last.ok?"ok":"ko");clearTimeout(ctx.mt);ctx.mt=setTimeout(()=>m.className="nt-msg",3500);if(navigator.vibrate)try{navigator.vibrate(st.last.ok?40:150)}catch(e){}}
-    const P=$(".nt-panel");$(".nt-stage").hidden=st.phase==="end";R.querySelector(".nt").classList.toggle("end",st.phase==="end");
+    const P=$(".nt-panel");$(".nt-stage").hidden=st.phase==="end"||!!(st.q&&st.q.opts&&(st.step==="question"||st.step==="reveal"));R.querySelector(".nt").classList.toggle("end",st.phase==="end");
     if(st.phase==="end"){
       const top=Math.max(...st.players.map(p=>p.wedges.length));
       const rk=st.players.slice().sort((a,b)=>b.wedges.length-a.wedges.length);
@@ -54,6 +54,25 @@ window.NetTriv=(function(){
       if(mine)P.querySelector("button").onclick=e=>{e.target.disabled=true;send({t:"spin"})};
     } else if(st.step==="spinning"){
       P.innerHTML=('<p class="nt-wait">'+_t('🎡 Girando…')+'</p>');
+    } else if((st.step==="question"||st.step==="reveal")&&st.q&&st.q.opts){
+      // online: 3 opciones y 10 segundos para quien tiene el turno
+      const c=st.cats.find(x=>x.k===st.q.cat),q=st.q,rev=st.step==="reveal";
+      if(ctx.qid!==q.id){ctx.qid=q.id;ctx.qStart=Date.now();ctx.picked=null}
+      clearInterval(ctx.tick);
+      let h='<div class="nt-card" style="--c1:'+c.c+';--c2:#1a1027"><div class="nt-ct">'+c.em+' '+esc(c.n)+'</div><div class="nt-q">'+esc(q.text)+'</div>';
+      if(!rev)h+='<div class="nt-timer"><i></i><b></b></div>';
+      h+='<div class="nt-opts">'+q.opts.map((o,i)=>{let cl="nt-opt";
+        if(rev){if(i===q.right)cl+=" right";else if(i===q.pick)cl+=" wrong"}else if(ctx.picked===i)cl+=" sel";
+        return '<button class="'+cl+'" data-i="'+i+'"'+(!mine||rev||ctx.picked!=null?" disabled":"")+'><span>'+"ABC"[i]+'</span>'+esc(o)+'</button>'}).join("")+'</div>';
+      if(rev)h+='<p class="nt-foot nt-res">'+(q.pick===q.right?_t("✅ ¡Correcto!"):q.pick<0?_t("⏱️ Se acabó el tiempo"):_t("❌ No era esa"))+'</p>';
+      else h+='<p class="nt-foot">'+(mine?(q.wedge&&!q.has?_t("🧀 Si aciertas te llevas el quesito"):_t("Si aciertas, sigues tirando")):'⏳ '+esc(cur.name)+_t(" está eligiendo…"))+'</p>';
+      P.innerHTML=h+'</div>';
+      if(!rev){
+        const bar=P.querySelector(".nt-timer i"),num=P.querySelector(".nt-timer b"),secs=q.secs||10;
+        const upd=()=>{const left=Math.max(0,secs-(Date.now()-ctx.qStart)/1000);bar.style.width=(left/secs*100)+"%";num.textContent=Math.ceil(left);bar.parentNode.classList.toggle("low",left<=3);if(left<=0)clearInterval(ctx.tick)};
+        upd();ctx.tick=setInterval(upd,100);
+        if(mine&&ctx.picked==null)P.querySelectorAll(".nt-opt").forEach(b=>b.onclick=()=>{ctx.picked=+b.dataset.i;P.querySelectorAll(".nt-opt").forEach(x=>{x.disabled=true;x.classList.toggle("sel",x===b)});send({t:"pick",i:+b.dataset.i,q:q.id})});
+      }
     } else if(st.step==="question"&&st.q){
       const c=st.cats.find(x=>x.k===st.q.cat);
       let h='<div class="nt-card" style="--c1:'+c.c+';--c2:#1a1027"><div class="nt-ct">'+c.em+' '+esc(c.n)+'</div><div class="nt-q">'+esc(st.q.text)+'</div>'+

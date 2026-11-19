@@ -15,6 +15,9 @@
   // cada pack de cartas desbloquea mazos completos: [objeto, mazo, cartas gratis sin el pack]
   const ITEMS=[
     {id:"hot",kind:"game",go:"hot-setup",price:300},
+    {id:"culo",kind:"game",go:"cg:culo",price:300},
+    {id:"bj",kind:"game",go:"cg:bj",price:400},
+    {id:"pk",kind:"game",go:"cg:pk",price:500},
     {id:"av_fantasia",kind:"avatars",cat:1,price:200,ids:["princesa","rey","mago","superheroe","vampiro","vampiro_m","zombi","ninja","sirena","elfo"]},
     {id:"av_animales",kind:"avatars",cat:4,price:250,ids:["a_gato","a_perro","a_panda","a_zorro","a_conejo","a_oso","a_pinguino","a_rana","a_unicornio","a_leon","a_koala","a_tigre","a_pollito","a_dino"]},
     {id:"av_aventura",kind:"avatars",cat:2,price:120,ids:["pirata","pirata_m","vikingo","vikingo_m","vaquero"]},

@@ -1253,3 +1253,21 @@ button.sh-ec[disabled]{opacity:.5}
 .join-box input{text-align:center;font-size:34px;letter-spacing:8px;font-weight:900;text-transform:uppercase;font-family:ui-monospace,Menlo,monospace;margin-top:8px}
 .r-back{width:40px;height:40px;border-radius:12px;background:var(--panel);font-size:26px;display:grid;place-items:center;color:inherit;text-decoration:none;margin-right:8px}
 .net-url{word-break:break-all}
+/* Trivial online: 3 opciones con tiempo */
+.nt-timer{position:relative;height:10px;border-radius:6px;background:rgba(0,0,0,.35);margin:12px 0 4px;overflow:visible}
+.nt-timer i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:linear-gradient(90deg,#2ed69a,#ffd23f);transition:width .1s linear}
+.nt-timer.low i{background:linear-gradient(90deg,#ff2b4a,#ff7a00)}
+.nt-timer b{position:absolute;right:0;top:-24px;font-size:15px;font-weight:900}
+.nt-timer.low b{color:#ff5c5c}
+.nt-opts{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.nt-opt{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;border-radius:14px;background:#fff;color:#1a1027;font-weight:800;font-size:16px;border:3px solid transparent;transition:transform .1s}
+.nt-opt span{flex:0 0 28px;height:28px;border-radius:9px;display:grid;place-items:center;background:#1a1027;color:#fff;font-size:14px}
+.nt-opt:not([disabled]):active{transform:scale(.98)}
+.nt-opt[disabled]{opacity:.85}
+.nt-opt.sel{border-color:#ffd23f;opacity:1}
+.nt-opt.right{background:#2ed69a;color:#062b1d;opacity:1}
+.nt-opt.wrong{background:#ff5c5c;color:#fff;opacity:1}
+.nt-res{font-size:17px;font-weight:900}
+.st-only{display:none}
+body.store .st-only{display:block}
+.join-btn{margin:12px auto 0}
