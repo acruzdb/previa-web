@@ -85,3 +85,78 @@ window.NetTriv=(function(){
   }
   return {mount,pie};
 })();
+
+// =====================================================================
+// PICTIONARY ONLINE: lienzo compartido. Quien dibuja manda los trazos (coordenadas
+// 0-1000) y los demás escriben la palabra exacta. La usan el anfitrión y los invitados.
+//   NetPicto.mount(root,{me,send,secret:st=>palabra|null}).render(st)
+// =====================================================================
+window.NetPicto=(function(){
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const T=s=>window._t?_t(s):s;
+  const COLORS=["#111111","#e53935","#1e88e5","#43a047","#fdd835","#fb8c00","#8e24aa","#ffffff"];
+  const SIZES=[6,14,30];
+  function mount(root,o){
+    root.innerHTML='<div class="pz">'+
+      '<div class="pz-top"><img class="av" alt=""><div class="pz-who"></div><div class="pz-time"></div></div>'+
+      '<div class="pz-scores"></div>'+
+      '<div class="pz-word" hidden></div>'+
+      '<div class="pz-canvas"><canvas width="1000" height="1000"></canvas><div class="pz-over" hidden></div></div>'+
+      '<div class="pz-tools" hidden><div class="pz-cols">'+COLORS.map((c,i)=>'<button data-c="'+c+'" style="background:'+c+'"'+(i===0?' class="on"':'')+'></button>').join("")+'</div>'+
+        '<div class="pz-sz">'+SIZES.map((w,i)=>'<button data-w="'+w+'"'+(i===0?' class="on"':'')+'><i style="width:'+(4+i*6)+'px;height:'+(4+i*6)+'px"></i></button>').join("")+
+        '<button data-act="undo">↶</button><button data-act="clear">🗑️</button></div></div>'+
+      '<form class="pz-guess" hidden><input maxlength="40" autocomplete="off" autocapitalize="none" spellcheck="false"><button class="btn primary sm">'+T("Enviar")+'</button></form>'+
+      '<div class="pz-feed"></div>'+
+      '<div class="pz-end" hidden></div>'+
+    '</div>';
+    const $=s=>root.querySelector(s),cv=$("canvas"),cx=cv.getContext("2d");
+    const inp=$(".pz-guess input");$(".pz-guess input").placeholder=T("Escribe la palabra…");
+    let st=null,rid=-1,ridStart=0,tick=null,mine=[],color=COLORS[0],width=SIZES[0],drawing=null,buf=[],flushT=null,amDrawer=false;
+    function paint(strokes){
+      cx.fillStyle="#fff";cx.fillRect(0,0,1000,1000);cx.lineCap="round";cx.lineJoin="round";
+      strokes.forEach(s=>{const p=s.p;if(!p||p.length<2)return;cx.strokeStyle=s.c;cx.lineWidth=s.w;cx.beginPath();cx.moveTo(p[0],p[1]);
+        if(p.length===2)cx.lineTo(p[0]+.1,p[1]);for(let i=2;i<p.length;i+=2)cx.lineTo(p[i],p[i+1]);cx.stroke()});
+    }
+    function pos(e){const r=cv.getBoundingClientRect();return [Math.round((e.clientX-r.left)/r.width*1000),Math.round((e.clientY-r.top)/r.height*1000)]}
+    function flush(){flushT=null;if(!drawing||!buf.length)return;o.send({t:"draw",rid,s:mine.length-1,c:drawing.c,w:drawing.w,pts:buf});buf=[]}
+    cv.addEventListener("pointerdown",e=>{if(!amDrawer)return;e.preventDefault();cv.setPointerCapture(e.pointerId);
+      const p=pos(e);drawing={c:color,w:width,p:p.slice()};mine.push(drawing);buf=p.slice();paint(mine);flush()});
+    cv.addEventListener("pointermove",e=>{if(!drawing)return;e.preventDefault();const p=pos(e),l=drawing.p;
+      if(Math.abs(p[0]-l[l.length-2])+Math.abs(p[1]-l[l.length-1])<4)return;
+      l.push(p[0],p[1]);buf.push(p[0],p[1]);paint(mine);if(!flushT)flushT=setTimeout(flush,90)});
+    const up=()=>{if(!drawing)return;clearTimeout(flushT);flush();drawing=null};
+    cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);cv.addEventListener("pointerleave",up);
+    root.querySelectorAll(".pz-cols button").forEach(b=>b.onclick=()=>{color=b.dataset.c;root.querySelectorAll(".pz-cols button").forEach(x=>x.classList.toggle("on",x===b))});
+    root.querySelectorAll(".pz-sz button[data-w]").forEach(b=>b.onclick=()=>{width=+b.dataset.w;root.querySelectorAll(".pz-sz button[data-w]").forEach(x=>x.classList.toggle("on",x===b))});
+    $('[data-act="undo"]').onclick=()=>{if(!mine.length)return;mine.pop();paint(mine);o.send({t:"undo",rid})};
+    $('[data-act="clear"]').onclick=()=>{mine=[];paint(mine);o.send({t:"clear",rid})};
+    $(".pz-guess").onsubmit=e=>{e.preventDefault();const v=inp.value.trim();if(!v||!st)return;o.send({t:"guess",text:v,rid:st.rid});inp.value=""};
+    function timer(){const left=Math.max(0,Math.ceil((st.secs||75)-(Date.now()-ridStart)/1000));const el=$(".pz-time");el.textContent=st.step==="draw"?left+"s":"";el.classList.toggle("low",left<=10)}
+    function render(s){
+      st=s;if(!s||!s.players)return;
+      const cur=s.players[s.turn]||s.players[0];
+      if(s.rid!==rid){rid=s.rid;ridStart=Date.now();mine=[];drawing=null;inp.value=""}
+      amDrawer=s.phase==="play"&&s.step==="draw"&&cur.id===o.me;
+      $(".pz-top img").src=avatarURL(cur.av);$(".pz-top img").style.borderColor=cur.color;
+      $(".pz-who").innerHTML=s.phase==="end"?T("🏁 Fin de la partida"):(cur.id===o.me?T("¡Te toca dibujar!"):esc(cur.name)+T(" dibuja"))+'<small>'+T("Ronda ")+Math.min(s.round,s.rounds)+"/"+s.rounds+'</small>';
+      $(".pz-scores").innerHTML=s.players.slice().sort((a,b)=>b.pts-a.pts).map(p=>'<span'+(p.id===cur.id&&s.phase==="play"?' class="cur"':'')+'><img class="av" alt="" src="'+avatarURL(p.av)+'" style="border-color:'+p.color+'">'+p.pts+'</span>').join("");
+      const word=amDrawer?o.secret(s):null;
+      $(".pz-word").hidden=!amDrawer;if(amDrawer)$(".pz-word").innerHTML=T("Dibuja: ")+'<b>'+esc(word||"…")+'</b>';
+      $(".pz-tools").hidden=!amDrawer;
+      $(".pz-guess").hidden=!(s.phase==="play"&&s.step==="draw"&&!amDrawer);
+      root.querySelector(".pz").classList.toggle("drawer",amDrawer);
+      if(amDrawer){if(!mine.length&&s.strokes.length&&!drawing)mine=s.strokes.map(x=>({c:x.c,w:x.w,p:x.p.slice()}));paint(mine)}else paint(s.strokes||[]);
+      const ov=$(".pz-over");
+      if(s.step==="reveal"||s.phase==="end"){const w=s.players.find(p=>p.id===s.winner);ov.hidden=false;
+        ov.innerHTML=(w?'<b>✅ '+esc(w.name)+T(" lo ha adivinado")+'</b>':'<b>⏱️ '+T("Nadie lo ha adivinado")+'</b>')+'<span>'+T("Era: ")+'<em>'+esc(s.word||"")+'</em></span>'}
+      else ov.hidden=true;
+      $(".pz-feed").innerHTML=(s.feed||[]).slice().reverse().map(f=>'<div class="'+(f.ok?"ok":"")+'"><b style="color:'+f.c+'">'+esc(f.n)+'</b> '+(f.ok?T("¡lo ha adivinado! 🎉"):esc(f.t)+' ❌')+'</div>').join("");
+      const end=$(".pz-end");end.hidden=s.phase!=="end";
+      if(s.phase==="end"){const r=s.players.slice().sort((a,b)=>b.pts-a.pts);
+        end.innerHTML='<h3>🏆 '+esc(r[0].name)+T(" gana")+'</h3>'+r.map((p,i)=>'<div class="pz-rank"><span>'+(i+1)+'</span><img class="av" alt="" src="'+avatarURL(p.av)+'" style="border-color:'+p.color+'"><b>'+esc(p.name)+'</b><em>'+p.pts+' pts</em></div>').join("")}
+      clearInterval(tick);if(s.step==="draw"&&s.phase==="play"){timer();tick=setInterval(timer,500)}else timer();
+    }
+    return {render};
+  }
+  return {mount};
+})();

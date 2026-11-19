@@ -55,7 +55,7 @@ function joinForm(){
     ('<button class="btn primary" id="r-go">'+_t('Entrar en la partida')+'</button>'+'</div>');
   body.querySelectorAll(".r-avs button").forEach(b=>b.onclick=()=>{myAv=b.dataset.id;body.querySelectorAll(".r-avs button").forEach(x=>x.classList.toggle("on",x===b))});
   $("#r-go").onclick=()=>{const n=$("#r-name").value.trim();if(!n){$("#r-name").focus();return}
-    ls.set("previa_net_name",n);ls.set("previa_net_av",myAv);joining=true;$("#r-go").textContent=_t("Uniéndote…");send({t:"join",name:n,av:myAv})};
+    ls.set("previa_net_name",n);ls.set("previa_net_av",myAv);joining=true;$("#r-go").textContent=_t("Uniéndote…");send({t:"join",name:n,av:myAv,key:myKey})};
 }
 // ---------- modo espejo (Parchís y Trivial con tablero) ----------
 let mv={scr:null,mod:null,toast:"",mine:false,claimed:null},mtT=null;
@@ -226,7 +226,7 @@ function render(){
       st.players.map(p=>'<span style="--tc:'+p.color+'"><img class="av" alt="" src="'+avatarURL(p.av)+'" style="border-color:'+p.color+'">'+esc(p.name)+(p.id===me?_t(" (tú)"):"")+'</span>').join("")+'</div></div>';
     return;
   }
-  if(view!=="game"){view="game";ui=NetTriv.mount(body,{me,send})}
+  if(view!=="game"){view="game";ui=st.kind==="picto"?NetPicto.mount(body,{me,send,secret:s=>Pueblo.dec((s.sec||{})[me]||"",myKey)||null}):NetTriv.mount(body,{me,send})}
   ui.render(st);
 }
 let lastV=-1;
