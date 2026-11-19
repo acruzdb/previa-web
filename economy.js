@@ -18,6 +18,15 @@
     {id:"culo",kind:"game",go:"cg:culo",price:300},
     {id:"bj",kind:"game",go:"cg:bj",price:400},
     {id:"pk",kind:"game",go:"cg:pk",price:500},
+    // juegos nuevos: bloqueados por defecto (200 de momento)
+    {id:"imp",kind:"game",go:"imp-setup",price:200},
+    {id:"pc",kind:"game",go:"pc-setup",price:200},
+    {id:"geo",kind:"game",go:"tg:geo",price:200},
+    {id:"pueblo",kind:"game",go:"pueblo-setup",price:200},
+    // categorías sueltas: Trivial «Érase una vez», Tabú e Impostor
+    {id:"tr_anim",kind:"cat",game:"trivial",key:"anim",go:"tg:trivial",price:200},
+    ...["lugares","profesiones","deportes","fiesta","famosos","vida","conceptos"].map(k=>({id:"tc_"+k,kind:"cat",game:"tabu",key:k,go:"tg:tabu",price:100})),
+    ...["dibujos","peliculas","series","famosos","marcas","fiesta","videojuegos"].map(k=>({id:"ic_"+k,kind:"cat",game:"imp",key:k,go:"imp-setup",price:100})),
     {id:"av_fantasia",kind:"avatars",cat:1,price:200,ids:["princesa","rey","mago","superheroe","vampiro","vampiro_m","zombi","ninja","sirena","elfo"]},
     {id:"av_animales",kind:"avatars",cat:4,price:250,ids:["a_gato","a_perro","a_panda","a_zorro","a_conejo","a_oso","a_pinguino","a_rana","a_unicornio","a_leon","a_koala","a_tigre","a_pollito","a_dino"]},
     {id:"av_aventura",kind:"avatars",cat:2,price:120,ids:["pirata","pirata_m","vikingo","vikingo_m","vaquero"]},
@@ -107,9 +116,12 @@
       for(const d of it.decks)if(d[0]===obj&&d[1]===key)return owns(W,it.id)?Infinity:d[2]}
     return Infinity;
   }
+  // categorías de un juego: bloqueada si hay artículo para ella y no lo tienes
+  function catItem(game,key){return ITEMS.find(it=>it.kind==="cat"&&it.game===game&&it.key===key)||null}
+  function catLocked(W,game,key){const it=catItem(game,key);return !!it&&!owns(W,it.id)}
   function deckItem(obj,key){return ITEMS.find(it=>it.kind==="cards"&&it.decks.some(d=>d[0]===obj&&d[1]===key))||null}
 
-  const E={sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem};
+  const E={sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem,catItem,catLocked};
   if(typeof module!=="undefined"&&module.exports)module.exports=E;
   root.Economy=E;
 })(typeof window!=="undefined"?window:globalThis);

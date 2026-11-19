@@ -69,6 +69,7 @@ function mirrorShell(){
   mv.scr=null;mv.mod=null;
   app.addEventListener("click",mirrorTap,true);
 }
+function toast(t){let e=document.getElementById("r-toast");if(!e){e=document.createElement("div");e.id="r-toast";e.className="toast";document.body.appendChild(e)}e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2200)}
 function plainShell(){
   const app=document.getElementById("app");
   if(app.dataset.mode!=="mirror")return;
@@ -92,6 +93,24 @@ function seatPicker(cls){
   return '<div class="mpick '+(cls||"")+'"><b>'+(mine?_t("Eres ")+esc(mine.name):_t("¿Quién eres?"))+'</b><div>'+st.seats.map(x=>'<button data-n="'+esc(x.name)+'" class="'+(x.by===me?"on":"")+'" '+(x.by&&x.by!==me?"disabled":"")+'><img class="av" alt="" src="'+avatarURL(x.av)+'" style="border-color:'+x.color+'"><span>'+esc(x.name)+'</span>'+(x.by&&x.by!==me?"<small>📱</small>":"")+'</button>').join("")+'</div></div>';
 }
 function bindPicker(root){root.querySelectorAll(".mpick button[data-n]").forEach(b=>b.onclick=()=>{send({t:"claim",name:b.dataset.n,key:myKey})})}
+// ---------- impostor ----------
+let imUI={open:false,seen:false,round:0};
+function renderImpR(){
+  plainShell();const body=$("#r-body");
+  if(st.phase==="closed"){body.innerHTML=('<div class="st-empty">'+'<div>'+'👋'+'</div>'+'<b>'+_t('La partida ha terminado')+'</b>'+'<p>'+_t('El anfitrión ha cerrado la sala.')+'</p>'+'</div>');return}
+  const mine=st.seats.find(x=>x.by===me);
+  if(st.phase==="lobby"||!mine){
+    body.innerHTML='<div class="panel r-lobby"><div class="nt-big-em">🕵️</div><h3>'+_t("Impostor")+'</h3><p class="hint">'+(st.phase==="lobby"?_t("Elige quién eres y espera a que empiece la partida."):_t("La partida ya ha empezado: elige quién eres para entrar."))+'</p>'+seatPicker()+'</div>';
+    bindPicker(body);return;
+  }
+  let priv={};try{priv=JSON.parse(Pueblo.dec((st.sec||{})[me]||"",myKey)||"{}")}catch(e){priv={}}
+  if(!priv.name)priv.name=mine.name;
+  if(imUI.round!==st.pub.round){imUI={open:false,seen:false,round:st.pub.round}}
+  body.innerHTML=ImpOnline.view(st.pub,priv,imUI)+(st.pub.step==="go"?'<p class="hint" style="text-align:center">'+_t("Cuando acabéis, el anfitrión revela al impostor.")+'</p>':st.pub.step==="end"?'<p class="hint" style="text-align:center">'+_t("Esperando a que el anfitrión empiece otra ronda…")+'</p>':"");
+  ImpOnline.bind(body,imUI,a=>{if(a==="needsee"){toast(_t("Primero toca la carta para ver tu palabra"));return}
+    if(a==="ready"){send({t:"iact",act:"ready"});return}
+    if(navigator.vibrate)try{navigator.vibrate(20)}catch(_){}renderImpR()});
+}
 // ---------- el pueblo duerme ----------
 function renderPueblo(){
   plainShell();const body=$("#r-body");
@@ -210,6 +229,7 @@ function render(){
   if(st&&st.kind==="pueblo")return renderPueblo();
   if(st&&st.kind==="uno")return renderUnoR();
   if(st&&st.kind==="ron")return renderRonR();
+  if(st&&st.kind==="imp")return renderImpR();
   if(st&&CGN[st.kind])return renderCGR();
   plainShell();
   const body=$("#r-body");

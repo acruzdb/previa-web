@@ -160,3 +160,48 @@ window.NetPicto=(function(){
   }
   return {mount};
 })();
+
+// =====================================================================
+// IMPOSTOR ONLINE: cada uno ve su rol en su móvil y pulsa «Listo». Cuando
+// están todos, a todos les sale quién empieza. La usan anfitrión e invitados.
+//   ImpOnline.view(pub,priv,ui) → html ;  ImpOnline.bind(root,ui,cb)
+// =====================================================================
+window.ImpOnline=(function(){
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const T=s=>window._t?_t(s):s;
+  const av=p=>'<img class="av" alt="" src="'+avatarURL(p.av)+'" style="border-color:'+p.color+'">';
+  function view(pub,priv,ui){
+    const me=priv&&priv.name,seats=pub.seats||[];
+    let h='<div class="io">';
+    if(pub.step==="roles"){
+      const isImp=priv.role==="imp",open=!!ui.open,ready=(pub.ready||[]).indexOf(me)>=0;
+      h+='<div class="io-card'+(open?" open":"")+(open?(isImp?" imp":" word"):"")+'" data-act="flip">';
+      if(!open)h+='<div class="io-tag">'+T("Ronda ")+pub.round+'</div><div style="font-size:64px">🤫</div><div class="io-big">'+T("Toca para ver tu rol")+'</div><div class="io-foot">'+T("Que nadie más mire 👀")+'</div>';
+      else if(isImp){h+='<div class="io-tag">'+esc(me)+T(", eres…")+'</div><div style="font-size:56px">🕵️</div><div class="io-big">'+T("EL IMPOSTOR")+'</div>';
+        if(priv.cat)h+='<div class="io-foot">'+T("Categoría: ")+'<b>'+esc(priv.cat)+'</b></div>';
+        h+=priv.hint?'<div class="io-foot">'+T("Tu pista: ")+'<b>'+esc(priv.hint)+'</b></div>':'<div class="io-foot">'+T("Sin pista: ¡a improvisar!")+'</div>';
+        if(priv.n>1)h+='<div class="io-foot">'+T("Hay ")+priv.n+T(" impostores. No sabes quiénes son los demás.")+'</div>'}
+      else{h+='<div class="io-tag">'+esc(me)+T(", tu palabra es")+'</div><div class="io-big">'+esc(priv.word)+'</div>';
+        if(priv.cat)h+='<div class="io-foot">'+T("Categoría: ")+'<b>'+esc(priv.cat)+'</b></div>';
+        h+='<div class="io-foot">'+T("Descríbela sin decirla, pero sin ponérselo fácil al impostor.")+'</div>'}
+      if(open)h+='<div class="io-foot" style="opacity:.7">'+T("Toca otra vez para taparla")+'</div>';
+      h+='</div>';
+      h+=ready?'<div class="io-wait">✅ '+T("Listo. Esperando a los demás…")+'</div>':'<button class="btn primary io-ready'+(ui.seen?"":" dim")+'" data-act="ready">'+T("✅ Listo")+'</button>';
+      h+='<div class="io-seats">'+seats.map(p=>'<span class="'+((pub.ready||[]).indexOf(p.name)>=0?"ok":"")+'">'+av(p)+esc(p.name)+'</span>').join("")+'</div>';
+    } else if(pub.step==="go"){
+      const st=seats.find(p=>p.name===pub.starter)||{name:pub.starter,av:"bombero",color:"#fff"};
+      h+='<div class="io-card open go"><div class="io-tag">'+T("¡Todos tenéis vuestra palabra!")+'</div>'+av(st)+'<div class="io-big">'+T("Empieza ")+esc(st.name)+'</div>'+
+        '<div class="io-foot" style="text-align:left">'+T("1️⃣ Por turnos, cada uno dice una palabra relacionada.")+'<br>'+T("2️⃣ Después, votad quién creéis que es el impostor.")+'</div></div>';
+      if(priv&&priv.role)h+='<div class="io-mine">'+(priv.role==="imp"?'🕵️ '+T("Eres el impostor"):T("Tu palabra: ")+'<b>'+esc(priv.word)+'</b>')+'</div>';
+    } else if(pub.step==="end"){
+      const list=seats.filter(p=>(pub.imps||[]).indexOf(p.name)>=0);
+      h+='<div class="io-card open end"><div class="io-tag">'+(list.length>1?T("Los impostores eran"):T("El impostor era"))+'</div><div class="io-list">'+list.map(p=>'<div>'+av(p)+esc(p.name)+'</div>').join("")+'</div><div class="io-foot">'+T("La palabra era ")+'<b>'+esc(pub.word||"")+'</b></div></div>';
+    }
+    return h+'</div>';
+  }
+  function bind(root,ui,cb){
+    const c=root.querySelector('[data-act="flip"]');if(c)c.onclick=()=>{ui.open=!ui.open;if(ui.open)ui.seen=true;cb("flip")};
+    const r=root.querySelector('[data-act="ready"]');if(r)r.onclick=()=>{if(!ui.seen){cb("needsee");return}cb("ready")};
+  }
+  return {view,bind};
+})();
