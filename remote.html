@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Previa · Jugar en grupo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <section class="screen active" id="r-main">
+    <header class="topbar"><div class="logo">PRE<span>VIA</span></div><span class="nt-badge" id="r-net">🟢 Conectado</span></header>
+    <div id="r-body"></div>
+  </section>
+</div>
+<script src="edition.js"></script>
+<script src="i18n.js"></script>
+<script src="avatars.js"></script>
+<script src="economy.js"></script>
+<script src="relay.js"></script>
+<script src="remote.js"></script>
+<script src="pueblo.js"></script>
+<script src="uno.js"></script>
+<script src="ron.js"></script>
+<script src="cartas.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let me=ls.get("previa_net_id",null);if(!me){me="c"+Math.random().toString(36).slice(2,10);ls.set("previa_net_id",me)}
+let myKey=ls.get("previa_net_key",null);if(!myKey){myKey=Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);ls.set("previa_net_key",myKey)}
+let puUI={open:false};
+let st=null,view=null,ui=null,myAv=ls.get("previa_net_av",AVATARS[Math.floor(Math.random()*AVATARS.length)].id),fails=0,joining=false;
+// sala online (por internet): ?room=CÓDIGO. Si no, la sala Wi-Fi del móvil anfitrión.
+const ROOM=(/[?&]room=([A-Za-z0-9]+)/.exec(location.search)||[])[1];
+const INAPP=/[?&]app=1\b/.test(location.search);
+let relay=null,lastJoin=null;
+function send(a){a.id=me;if(a.t==="join")lastJoin=a;
+  if(relay){relay.pub("act",a);return Promise.resolve()}
+  return fetch("api/send",{method:"POST",body:JSON.stringify(a)}).catch(()=>{})}
+// desde la app de la tienda: solo los avatares que tiene desbloqueados; nombre y avatar del primer jugador
+function myAvatars(){
+  const storeEd=window.PREVIA_EDITION==="store"||/[?&]edition=store\b/.test(location.search);
+  if(!(INAPP&&storeEd&&window.Economy))return AVATARS;
+  const W=Economy.load(ls.get("previa_wallet",null),Economy.dayKey());
+  return AVATARS.filter(a=>!Economy.avLocked(W,a.id));
+}
+if(INAPP){const p0=(ls.get("previa_players",[])||[])[0];if(p0&&!ls.get("previa_net_name",""))ls.set("previa_net_name",p0.name);if(p0&&p0.av&&!ls.get("previa_net_av",null))myAv=p0.av}
+function joinForm(){
+  const body=$("#r-body");view="join";
+  const AVL=myAvatars();if(!AVL.some(a=>a.id===myAv))myAv=AVL[0].id;
+  body.innerHTML=('<div class="panel r-join">'+'<h3>'+_t('🧠 Trivial en grupo')+'</h3>'+'<p class="hint">'+_t('Escribe tu nombre y elige avatar para unirte a la partida.')+'</p>')+
+    '<input id="r-name" maxlength="14" placeholder="Tu nombre" value="'+esc(ls.get("previa_net_name",""))+'">'+
+    '<div class="r-avs">'+AVL.map(a=>'<button data-id="'+a.id+'" class="'+(a.id===myAv?"on":"")+'"><img alt="" src="'+avatarURL(a.id)+'"></button>').join("")+'</div>'+
+    ('<button class="btn primary" id="r-go">'+_t('Entrar en la partida')+'</button>'+'</div>');
+  body.querySelectorAll(".r-avs button").forEach(b=>b.onclick=()=>{myAv=b.dataset.id;body.querySelectorAll(".r-avs button").forEach(x=>x.classList.toggle("on",x===b))});
+  $("#r-go").onclick=()=>{const n=$("#r-name").value.trim();if(!n){$("#r-name").focus();return}
+    ls.set("previa_net_name",n);ls.set("previa_net_av",myAv);joining=true;$("#r-go").textContent=_t("Uniéndote…");send({t:"join",name:n,av:myAv})};
+}
+// ---------- modo espejo (Parchís y Trivial con tablero) ----------
+let mv={scr:null,mod:null,toast:"",mine:false,claimed:null},mtT=null;
+function mtoast(t){let el=document.getElementById("toast");if(!el){el=document.createElement("div");el.id="toast";el.className="toast";document.getElementById("app").appendChild(el)}el.textContent=t;el.hidden=false;clearTimeout(mtT);mtT=setTimeout(()=>el.hidden=true,2200)}
+function fixAv(root){root.querySelectorAll("[data-av-src]").forEach(e=>e.setAttribute("src",avatarURL(e.getAttribute("data-av-src"))));root.querySelectorAll("[data-av-href]").forEach(e=>e.setAttribute("href",avatarURL(e.getAttribute("data-av-href"))))}
+function mirrorShell(){
+  const app=document.getElementById("app");
+  if(app.dataset.mode==="mirror")return;
+  app.dataset.mode="mirror";app.classList.add("mirror");
+  app.innerHTML='<div id="mscr"></div><div id="mmod"></div><div class="mirbar" id="mbar"></div>';
+  mv.scr=null;mv.mod=null;
+  app.addEventListener("click",mirrorTap,true);
+}
+function plainShell(){
+  const app=document.getElementById("app");
+  if(app.dataset.mode!=="mirror")return;
+  app.dataset.mode="";app.classList.remove("mirror");app.removeEventListener("click",mirrorTap,true);
+  app.innerHTML=('<section class="screen active" id="r-main">'+'<header class="topbar">'+'<div class="logo">'+'PRE'+'<span>'+'VIA'+'</span>'+'</div>'+'<span class="nt-badge" id="r-net">'+_t('🟢 Conectado')+'</span>'+'</header>'+'<div id="r-body">'+'</div>'+'</section>');
+  view=null;
+}
+function pathOf(root,el){const p=[];while(el&&el!==root){const par=el.parentElement;if(!par)return null;p.unshift(Array.prototype.indexOf.call(par.children,el));el=par}return el===root?p:null}
+function mirrorTap(e){
+  const t=e.target;if(t.closest("#mbar")||t.closest(".mpick"))return;
+  const inMod=t.closest("#mmod"),inScr=t.closest("#mscr");if(!inMod&&!inScr)return;
+  e.preventDefault();e.stopPropagation();
+  if(t.closest(".topbar"))return;
+  if(!mv.mine){mtoast(mv.claimed?_t("⏳ Espera tu turno"):_t("👆 Primero elige quién eres"));return}
+  const root=inMod?inMod.firstElementChild:inScr.firstElementChild,path=pathOf(root,t);if(!path)return;
+  if(navigator.vibrate)try{navigator.vibrate(15)}catch(_){}
+  send({t:"tap",r:inMod?"m":"s",path});
+}
+function seatPicker(cls){
+  const mine=st.seats.find(x=>x.by===me);
+  return '<div class="mpick '+(cls||"")+'"><b>'+(mine?_t("Eres ")+esc(mine.name):_t("¿Quién eres?"))+'</b><div>'+st.seats.map(x=>'<button data-n="'+esc(x.name)+'" class="'+(x.by===me?"on":"")+'" '+(x.by&&x.by!==me?"disabled":"")+'><img class="av" alt="" src="'+avatarURL(x.av)+'" style="border-color:'+x.color+'"><span>'+esc(x.name)+'</span>'+(x.by&&x.by!==me?"<small>📱</small>":"")+'</button>').join("")+'</div></div>';
+}
+function bindPicker(root){root.querySelectorAll(".mpick button[data-n]").forEach(b=>b.onclick=()=>{send({t:"claim",name:b.dataset.n,key:myKey})})}
+// ---------- el pueblo duerme ----------
+function renderPueblo(){
+  plainShell();const body=$("#r-body");
+  if(st.phase==="closed"){body.innerHTML=('<div class="st-empty">'+'<div>'+'👋'+'</div>'+'<b>'+_t('La partida ha terminado')+'</b>'+'<p>'+_t('El anfitrión ha cerrado la sala.')+'</p>'+'</div>');return}
+  const mine=st.seats.find(x=>x.by===me);
+  if(st.phase==="lobby"||!mine){
+    body.innerHTML=('<div class="panel r-lobby">'+'<div class="nt-big-em">'+'🌙'+'</div>'+'<h3>'+_t('El pueblo duerme')+'</h3>'+'<p class="hint">')+(st.phase==="lobby"?_t("Elige quién eres y espera a que empiece la partida."):_t("La partida ya ha empezado: elige quién eres para entrar."))+'</p>'+seatPicker()+'</div>';
+    bindPicker(body);return;
+  }
+  let priv={};try{priv=JSON.parse(Pueblo.dec((st.sec||{})[me]||"",myKey)||"{}")}catch(e){priv={}}
+  body.innerHTML=Pueblo.view(st.pub,Object.assign({name:mine.name},priv),puUI);
+  Pueblo.bind(body,(act,name)=>{if(act==="reveal"){puUI.open=!puUI.open;if(navigator.vibrate)try{navigator.vibrate(20)}catch(_){}return renderPueblo()}send({t:"pact",act,name})});
+  Pueblo.flash(st.pub.flash);
+}
+// ---------- Culo, Blackjack y Póker ----------
+const CGN={culo:[_t("Culo"),"🍑"],bj:[_t("Blackjack"),"🂡"],pk:[_t("Póker"),"♠️"]};
+let cgUI={sel:[]};
+function renderCGR(){
+  plainShell();const body=$("#r-body"),N=CGN[st.kind];
+  if(st.phase==="closed"){body.innerHTML=('<div class="st-empty">'+'<div>'+'👋'+'</div>'+'<b>'+_t('La partida ha terminado')+'</b>'+'<p>'+_t('El anfitrión ha cerrado la sala.')+'</p>'+'</div>');return}
+  const mine=st.seats.find(x=>x.by===me);
+  if(st.phase==="lobby"||!mine){
+    body.innerHTML='<div class="panel r-lobby"><div class="nt-big-em">'+N[1]+'</div><h3>'+N[0]+'</h3><p class="hint">'+(st.phase==="lobby"?_t("Elige quién eres y espera a que empiece la partida."):_t("La partida ya ha empezado: elige quién eres para entrar."))+'</p>'+seatPicker()+'</div>';
+    bindPicker(body);return;
+  }
+  let priv={};try{priv=JSON.parse(Pueblo.dec((st.sec||{})[me]||"",myKey)||"{}")}catch(e){priv={}}
+  if(!priv.name)priv.name=mine.name;priv.isHost=false;priv.local=false;
+  if(priv.hand)cgUI.sel=(cgUI.sel||[]).filter(id=>priv.hand.some(k=>k.id===id&&k.ok));
+  body.innerHTML=Cartas.views[st.kind](st.pub,priv,cgUI);
+  Cartas.bind(body,(act,arg)=>{
+    if(act==="pick"){if(Cartas.selSame(cgUI,priv,arg)){if(navigator.vibrate)try{navigator.vibrate(10)}catch(_){}renderCGR()}return}
+    if(act==="play"){const ids=cgUI.sel.slice();cgUI.sel=[];renderCGR();return send({t:"cg",act:"play",arg:ids})}
+    send({t:"cg",act,arg});
+  });
+  Cartas.flash(st.pub.flash);
+  const pl=st.pub.players||[],myT=(st.pub.stage==="play")&&pl[st.pub.turn]&&pl[st.pub.turn].name===mine.name;
+  if(myT&&!cgUI.wasMine&&navigator.vibrate)try{navigator.vibrate([60,40,60])}catch(_){}
+  cgUI.wasMine=myT;
+}
+// ---------- Cabeza de ron ----------
+let rnUI={sel:[]};
+function renderRonR(){
+  plainShell();const body=$("#r-body");
+  if(st.phase==="closed"){body.innerHTML=('<div class="st-empty">'+'<div>'+'👋'+'</div>'+'<b>'+_t('La partida ha terminado')+'</b>'+'<p>'+_t('El anfitrión ha cerrado la sala.')+'</p>'+'</div>');return}
+  const mine=st.seats.find(x=>x.by===me);
+  if(st.phase==="lobby"||!mine){
+    body.innerHTML=('<div class="panel r-lobby">'+'<div class="nt-big-em">'+'🥃'+'</div>'+'<h3>'+_t('Cabeza de ron')+'</h3>'+'<p class="hint">')+(st.phase==="lobby"?_t("Elige quién eres y espera a que empiece la partida."):_t("La partida ya ha empezado: elige quién eres para entrar."))+'</p>'+seatPicker()+'</div>';
+    bindPicker(body);return;
+  }
+  let priv={};try{priv=JSON.parse(Pueblo.dec((st.sec||{})[me]||"",myKey)||"{}")}catch(e){priv={}}
+  if(!priv.name)priv.name=mine.name;
+  rnUI.sel=(rnUI.sel||[]).filter(id=>(priv.hand||[]).some(k=>k.id===id&&k.ok));
+  body.innerHTML=Ron.view(st.pub,priv,rnUI);
+  Ron.bind(body,(act,arg)=>{
+    if(act==="pick"){if(Ron.toggleSel(rnUI,priv,arg)){if(navigator.vibrate)try{navigator.vibrate(10)}catch(_){}renderRonR()}return}
+    if(act==="play"){const ids=rnUI.sel.slice();rnUI.sel=[];renderRonR();return send({t:"ract",act:"play",ids})}
+    send({t:"ract",act,n:arg});
+  });
+  Ron.flash(st.pub.flash);
+  const myT=!st.pub.over&&st.pub.players[st.pub.turn]&&st.pub.players[st.pub.turn].name===mine.name;
+  if(myT&&!rnUI.wasMine&&navigator.vibrate)try{navigator.vibrate([60,40,60])}catch(_){}
+  rnUI.wasMine=myT;
+}
+// ---------- ¡Última! ----------
+let unUI={pick:null};
+function renderUnoR(){
+  plainShell();const body=$("#r-body");
+  if(st.phase==="closed"){body.innerHTML=('<div class="st-empty">'+'<div>'+'👋'+'</div>'+'<b>'+_t('La partida ha terminado')+'</b>'+'<p>'+_t('El anfitrión ha cerrado la sala.')+'</p>'+'</div>');return}
+  const mine=st.seats.find(x=>x.by===me);
+  if(st.phase==="lobby"||!mine){
+    body.innerHTML=('<div class="panel r-lobby">'+'<div class="nt-big-em">'+'🃏'+'</div>'+'<h3>'+_t('¡Última!')+'</h3>'+'<p class="hint">')+(st.phase==="lobby"?_t("Elige quién eres y espera a que empiece la partida."):_t("La partida ya ha empezado: elige quién eres para entrar."))+'</p>'+seatPicker()+'</div>';
+    bindPicker(body);return;
+  }
+  let priv={};try{priv=JSON.parse(Pueblo.dec((st.sec||{})[me]||"",myKey)||"{}")}catch(e){priv={}}
+  if(!priv.name)priv.name=mine.name;
+  if(unUI.pick!=null&&!(priv.hand||[]).some(k=>k.id===unUI.pick&&k.ok))unUI.pick=null;
+  body.innerHTML=Uno.view(st.pub,priv,unUI);
+  Uno.bind(body,(act,arg)=>{
+    if(act==="play"){const k=(priv.hand||[]).find(x=>x.id===arg);if(!k)return;if(!k.ok){if(navigator.vibrate)try{navigator.vibrate(40)}catch(_){}return}
+      if(k.c==="w"){unUI.pick=arg;return renderUnoR()}return send({t:"uact",act:"play",cid:arg})}
+    if(act==="color"){const id=unUI.pick;unUI.pick=null;renderUnoR();return send({t:"uact",act:"play",cid:id,c:arg})}
+    if(act==="nopick"){unUI.pick=null;return renderUnoR()}
+    if(act==="race")return send({t:"uact",act:"race"});
+    send({t:"uact",act});
+  });
+  Uno.flash(st.pub.flash);
+  const myT=!st.pub.over&&st.pub.players[st.pub.turn]&&st.pub.players[st.pub.turn].name===mine.name;
+  if(myT&&!unUI.wasMine&&navigator.vibrate)try{navigator.vibrate([60,40,60])}catch(_){}
+  unUI.wasMine=myT;
+}
+function renderMirror(){
+  if(st.phase==="closed"){plainShell();$("#r-body").innerHTML=('<div class="st-empty">'+'<div>'+'👋'+'</div>'+'<b>'+_t('La partida ha terminado')+'</b>'+'<p>'+_t('El anfitrión ha cerrado la sala.')+'</p>'+'</div>');return}
+  const mine=st.seats.find(x=>x.by===me);mv.claimed=mine?mine.name:null;
+  if(st.phase!=="play"){
+    plainShell();view="mlobby";
+    $("#r-body").innerHTML='<div class="panel r-lobby"><div class="nt-big-em">'+(st.title==="Parchís"?"🏁":"🧠")+'</div><h3>'+esc(st.title)+(_t(' en grupo')+'</h3>'+'<p class="hint">')+(st.phase==="wait"?_t("El anfitrión está preparando la partida…"):_t("Elige quién eres y espera a que el anfitrión empiece."))+'</p>'+seatPicker()+'</div>';
+    bindPicker($("#r-body"));return;
+  }
+  mirrorShell();
+  const app=document.getElementById("app"),S=document.getElementById("mscr"),M=document.getElementById("mmod");
+  if(mv.scr!==st.screen){S.innerHTML=st.screen;fixAv(S);mv.scr=st.screen}
+  const wasMine=mv.mine;mv.mine=!!(mine&&st.actors.indexOf(mine.name)>=0);
+  if(mv.mod!==st.modal||mv.ansMine!==(st.ans&&mine&&st.curTeam.indexOf(mine.name)>=0)){M.innerHTML=st.modal;fixAv(M);mv.mod=st.modal;
+    mv.ansMine=!!(st.ans&&mine&&st.curTeam.indexOf(mine.name)>=0);
+    if(mv.ansMine)M.querySelectorAll(".answer").forEach(a=>a.innerHTML=_t("🤫 Los demás están viendo la respuesta"))}
+  app.classList.toggle("myturn",mv.mine);
+  const bar=document.getElementById("mbar");
+  bar.innerHTML=!mine?seatPicker("float"):(mv.mine?('<b>'+_t('🎯 ¡Te toca!')+'</b>'):'<span>⏳ '+(st.actors.length===1?esc(st.actors[0]):st.actors.length?_t("Responden otros"):_t("Esperando"))+'</span>');
+  if(!mine)bindPicker(bar);
+  bar.className="mirbar"+(mv.mine?" go":"")+(!mine?" pick":"");
+  if(mv.mine&&!wasMine&&navigator.vibrate)try{navigator.vibrate([60,40,60])}catch(_){}
+  if(st.toast&&st.toast!==mv.toast)mtoast(st.toast);mv.toast=st.toast;
+}
+function render(){
+  if(st&&st.kind==="mirror")return renderMirror();
+  if(st&&st.kind==="pueblo")return renderPueblo();
+  if(st&&st.kind==="uno")return renderUnoR();
+  if(st&&st.kind==="ron")return renderRonR();
+  if(st&&CGN[st.kind])return renderCGR();
+  plainShell();
+  const body=$("#r-body");
+  if(st&&st.phase==="closed"){body.innerHTML=('<div class="st-empty">'+'<div>'+'👋'+'</div>'+'<b>'+_t('La partida ha terminado')+'</b>'+'<p>'+_t('El anfitrión ha cerrado la sala.')+'</p>'+'</div>');view=null;return}
+  if(!st||!st.players){body.innerHTML=('<p class="nt-wait">'+_t('Conectando con la partida…')+'</p>');view=null;return}
+  const inGame=st.players.some(p=>p.id===me);
+  if(!inGame){
+    if(st.phase!=="lobby"){body.innerHTML=('<div class="st-empty">'+'<div>'+'⏳'+'</div>'+'<b>'+_t('La partida ya ha empezado')+'</b>'+'<p>'+_t('Espera a la siguiente para unirte.')+'</p>'+'</div>');view=null;return}
+    if(view!=="join")joinForm();return;
+  }
+  if(st.phase==="lobby"){
+    view="lobby";
+    body.innerHTML=('<div class="panel r-lobby">'+'<div class="nt-big-em">'+'✅'+'</div>'+'<h3>'+_t('¡Estás dentro!')+'</h3>'+'<p class="hint">'+_t('Esperando a que el anfitrión empiece la partida…')+'</p>'+'<div class="r-plist">')+
+      st.players.map(p=>'<span style="--tc:'+p.color+'"><img class="av" alt="" src="'+avatarURL(p.av)+'" style="border-color:'+p.color+'">'+esc(p.name)+(p.id===me?_t(" (tú)"):"")+'</span>').join("")+'</div></div>';
+    return;
+  }
+  if(view!=="game"){view="game";ui=NetTriv.mount(body,{me,send})}
+  ui.render(st);
+}
+let lastV=-1;
+function netBadge(ok){const b=$("#r-net");if(!b)return;b.textContent=ok?(ROOM?"🌍 "+ROOM:_t("🟢 Conectado")):_t("🔴 Reconectando…");b.className="nt-badge"+(ok?"":" off")}
+if(ROOM){
+  if(INAPP){const tb=document.querySelector("#r-main .topbar");const a=document.createElement("a");a.className="r-back";a.href="#";a.textContent="‹";
+    const leave=()=>{if(history.length>1)history.back();else location.href="index.html"};
+    a.onclick=e=>{e.preventDefault();leave()};tb.insertBefore(a,tb.firstChild);
+    window.onAndroidBack=()=>{leave();return true}} // botón atrás del móvil: volver a la app, no cerrarla
+  netBadge(false);$("#r-net").textContent=_t("🟡 Conectando…");
+  relay=Relay.open({room:ROOM,sub:["state"],
+    onStatus:s=>netBadge(s==="online"),
+    onMsg:(k,s)=>{if(k!=="state"||!s)return;if(s.v!==lastV||s.phase==="closed"){lastV=s.v;st=s;render()}
+      // si la petición para entrar se perdió (reconexión), se vuelve a mandar
+      if(joining&&lastJoin&&st.players&&!st.players.some(p=>p.id===me)&&st.phase==="lobby"&&(!send.t||Date.now()-send.t>2500)){send.t=Date.now();relay.pub("act",lastJoin)}}});
+  // sin respuesta del anfitrión: la sala no existe o se ha cerrado
+  setTimeout(()=>{if(!st&&$("#r-body")){$("#r-body").innerHTML='<div class="st-empty"><div>🔎</div><b>'+_t("No encontramos la sala ")+esc(ROOM)+'</b><p>'+_t("Revisa el código o pide a quien la creó que la vuelva a abrir.")+'</p></div>'}},12000);
+  setInterval(()=>{if(joining&&lastJoin&&st&&st.players&&!st.players.some(p=>p.id===me)&&st.phase==="lobby")relay.pub("act",lastJoin)},3000);
+  render();
+}
+async function poll(){
+  try{const r=await fetch("api/state",{cache:"no-store"});const s=await r.json();fails=0;if($("#r-net")){$("#r-net").textContent=_t("🟢 Conectado");$("#r-net").className="nt-badge"}
+    if(s.v!==lastV){lastV=s.v;st=s;render()}}
+  catch(e){fails++;if(fails>2&&$("#r-net")){$("#r-net").textContent=_t("🔴 Reconectando…");$("#r-net").className="nt-badge off"}}
+  setTimeout(poll,st&&(st.kind==="uno"||st.kind==="ron"||CGN[st.kind])?250:st&&(st.kind==="mirror"||st.kind==="pueblo")?400:600);
+}
+if(!ROOM)poll();
+})();
+</script>
+</body>
+</html>
