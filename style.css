@@ -1443,3 +1443,47 @@ body.store .st-only{display:block}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 0 #b5124f,0 10px 22px -6px rgba(255,46,136,.55)}
 .qbtn.surprise:active{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 0 #b5124f}
 #btn-lobby,.lobby{box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 20px -10px rgba(0,0,0,.6)}
+
+/* =====================================================================
+   ANIMACIONES DE LOS DIBUJOS DE CADA TARJETA (suaves y en bucle)
+   Se paran en tarjetas bloqueadas y si el móvil pide «reducir movimiento».
+   ===================================================================== */
+.mode .mode-emoji{will-change:transform;transform-origin:50% 60%}
+.m-board .mode-emoji{animation:a-dice 3.2s ease-in-out infinite}
+@keyframes a-dice{0%,62%,100%{transform:none}70%{transform:translateY(-10px) rotate(-90deg)}78%{transform:translateY(0) rotate(-180deg)}84%{transform:translateY(-4px) rotate(-200deg)}90%{transform:rotate(-180deg)}99.9%{transform:rotate(-180deg)}}
+.m-bottle .mode-emoji{animation:a-spin 4s cubic-bezier(.25,.1,.25,1) infinite}
+@keyframes a-spin{0%,45%{transform:rotate(0)}85%,100%{transform:rotate(720deg)}}
+.m-yn .mode-emoji{animation:a-peek 2.6s ease-in-out infinite}
+@keyframes a-peek{0%,100%{transform:rotate(0)}20%{transform:rotate(-10deg) translateX(-2px)}40%{transform:rotate(8deg) translateX(2px)}55%{transform:rotate(0)}}
+.m-hot .mode-emoji,.sh-hero .em{animation:a-fire 1.1s ease-in-out infinite alternate;transform-origin:50% 95%}
+@keyframes a-fire{0%{transform:scale(1,1) skewX(0);filter:drop-shadow(0 4px 6px rgba(0,0,0,.35)) brightness(1)}35%{transform:scale(.96,1.08) skewX(-3deg)}70%{transform:scale(1.04,.95) skewX(3deg);filter:drop-shadow(0 0 10px rgba(255,140,0,.6)) brightness(1.12)}100%{transform:scale(.98,1.06) skewX(-1deg)}}
+.sh-hero .em{animation-name:a-fire2}
+@keyframes a-fire2{0%{transform:rotate(-12deg) scale(1,1)}50%{transform:rotate(-10deg) scale(.96,1.07)}100%{transform:rotate(-13deg) scale(1.03,.96)}}
+.m-triv .mode-emoji{animation:a-beat 1.8s ease-in-out infinite}
+@keyframes a-beat{0%,40%,100%{transform:scale(1)}10%{transform:scale(1.14)}20%{transform:scale(1)}30%{transform:scale(1.08)}}
+.m-picto .mode-emoji{animation:a-draw 1.6s ease-in-out infinite;transform-origin:20% 90%}
+@keyframes a-draw{0%{transform:translate(0,0) rotate(0)}20%{transform:translate(4px,-3px) rotate(-6deg)}40%{transform:translate(-3px,2px) rotate(4deg)}60%{transform:translate(5px,1px) rotate(-4deg)}80%{transform:translate(-2px,-2px) rotate(3deg)}100%{transform:translate(0,0) rotate(0)}}
+.m-mim .mode-emoji{animation:a-sway 2.4s ease-in-out infinite}
+@keyframes a-sway{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.06)}}
+.m-uno .mode-emoji,.m-bj .mode-emoji,.m-pk .mode-emoji{animation:a-flip 3.4s ease-in-out infinite}
+.m-bj .mode-emoji{animation-delay:-1.1s}.m-pk .mode-emoji{animation-delay:-2.2s}
+@keyframes a-flip{0%,60%,100%{transform:perspective(200px) rotateY(0)}80%{transform:perspective(200px) rotateY(180deg) scale(1.05)}99%{transform:perspective(200px) rotateY(360deg)}}
+.m-tabu .mode-emoji{animation:a-no 2.4s ease-in-out infinite}
+@keyframes a-no{0%,50%,100%{transform:translateX(0)}60%{transform:translateX(-4px) rotate(-8deg)}70%{transform:translateX(4px) rotate(8deg)}80%{transform:translateX(-3px) rotate(-5deg)}90%{transform:translateX(2px) rotate(3deg)}}
+.m-imp .mode-emoji{animation:a-spy 3s ease-in-out infinite}
+@keyframes a-spy{0%,100%{transform:translateX(0) scaleX(1)}25%{transform:translateX(-4px) scaleX(1)}45%{transform:translateX(-4px) scaleX(-1)}70%{transform:translateX(4px) scaleX(-1)}90%{transform:translateX(4px) scaleX(1)}}
+.m-pc .mode-emoji{animation:a-wave 1.4s ease-in-out infinite;transform-origin:15% 90%}
+@keyframes a-wave{0%,100%{transform:skewY(0) rotate(0)}25%{transform:skewY(-6deg) rotate(-3deg)}75%{transform:skewY(5deg) rotate(2deg)}}
+/* la Tierra gira: va pasando por las tres caras del globo */
+.m-geo .mode-emoji{font-size:0!important}
+.m-geo .mode-emoji::before{content:"🌍";font-size:44px;line-height:1;display:block;animation:a-globe 2.4s steps(1) infinite}
+@keyframes a-globe{0%{content:"🌍"}33.3%{content:"🌎"}66.6%{content:"🌏"}}
+.m-pueblo .mode-emoji{animation:a-moon 4s ease-in-out infinite}
+@keyframes a-moon{0%,100%{transform:rotate(-10deg) translateY(0);filter:drop-shadow(0 0 0 rgba(255,230,120,0))}50%{transform:rotate(8deg) translateY(-3px);filter:drop-shadow(0 0 10px rgba(255,230,120,.7))}}
+.m-ron .mode-emoji{animation:a-slosh 2.2s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes a-slosh{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}}
+.m-culo .mode-emoji{animation:a-bounce 1.6s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes a-bounce{0%,100%{transform:translateY(0) scale(1,1)}30%{transform:translateY(-7px) scale(.96,1.05)}55%{transform:translateY(0) scale(1.08,.92)}70%{transform:translateY(0) scale(1)}}
+/* quietos si están bloqueados o el sistema pide menos movimiento */
+.mode.premium .mode-emoji,.mode.locked .mode-emoji,.mode.premium .mode-emoji::before,.mode.locked .mode-emoji::before{animation:none}
+@media (prefers-reduced-motion:reduce){.mode .mode-emoji,.mode .mode-emoji::before,.sh-hero .em{animation:none!important}}
