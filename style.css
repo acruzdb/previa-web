@@ -1336,3 +1336,110 @@ body.store .st-only{display:block}
 .io-seats span.ok::after{content:"✓";color:#2ed69a;font-weight:900}
 .io-seats .av{width:26px;height:26px}
 .mode h2 em.onl{font-style:normal;font-size:.8em;vertical-align:middle}
+
+/* =====================================================================
+   REDISEÑO v5 · tarjetas con volumen (opción 1)
+   Colores más vivos, brillo arriba, canto inferior en 3D y sombra suave.
+   Solo capa visual: misma estructura y mismos tamaños de pantalla.
+   ===================================================================== */
+#app{background:
+  radial-gradient(90% 45% at 15% -5%,#4a1a78 0%,transparent 60%),
+  radial-gradient(70% 40% at 105% 15%,#2a1c6e 0%,transparent 60%),
+  radial-gradient(80% 50% at 100% 110%,#11314a 0%,transparent 60%),
+  linear-gradient(180deg,#140c26 0%,var(--bg) 70%)}
+
+/* --- tarjetas de juego --- */
+.mode{border:1px solid rgba(255,255,255,.2);border-radius:22px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -5px 0 rgba(0,0,0,.2),0 10px 22px -6px rgba(0,0,0,.55);
+  transition:transform .12s,box-shadow .12s}
+.mode::before{content:"";position:absolute;left:0;right:0;top:0;height:55%;border-radius:22px 22px 40% 40%/22px 22px 18px 18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,0));pointer-events:none;z-index:-1}
+.mode:active{transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 0 rgba(0,0,0,.2),0 4px 10px -4px rgba(0,0,0,.5)}
+.mode::after{opacity:.16}
+.mode-emoji{background:none;font-size:46px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.mode h2{text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.mode p{color:rgba(255,255,255,.9)}
+.mode .chev{position:absolute;right:12px;bottom:12px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  background:rgba(255,255,255,.25);border:1.5px solid rgba(255,255,255,.55);color:#fff;font-size:20px;font-weight:900;line-height:1;padding-bottom:2px}
+.mode:not(.sm){padding-right:46px}
+.mode:not(.sm) .chev{top:50%;bottom:auto;transform:translateY(-50%)}
+.mode .new,.mode h2 .new{position:absolute;top:9px;right:9px;margin:0;z-index:2;background:#ffd60a;color:#1a1027;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.mode.premium .new,.mode.locked .new{display:none}
+.mode.premium .chev,.mode.locked .chev{display:none}
+
+/* tarjetas pequeñas: icono a la izquierda, texto y flecha (como la opción 1) */
+.modes.grid{gap:12px}
+.mode.sm{display:grid;grid-template-columns:44px 1fr;grid-template-rows:auto auto;column-gap:10px;row-gap:3px;align-items:center;align-content:center;
+  padding:16px 14px 18px;border-radius:20px;min-height:104px}
+.mode.sm::before{border-radius:20px 20px 40% 40%/20px 20px 16px 16px}
+.mode.sm .mode-emoji{grid-row:1/3;grid-column:1;width:44px;height:44px;font-size:38px;align-self:center}
+.mode.sm h2{grid-column:2;font-size:17px;line-height:1.1;align-self:end;padding-right:4px}
+.mode.sm p{grid-column:2;font-size:12px;line-height:1.3;align-self:start;padding-right:22px}
+.mode.sm.wide{grid-template-columns:52px 1fr}
+.mode.sm.wide .mode-emoji{width:52px;height:52px;font-size:44px}
+
+/* colores más vivos */
+.m-board{background:linear-gradient(160deg,#a855f7 0%,#7c3aed 45%,#c026d3 100%)}
+.m-bottle{background:linear-gradient(160deg,#34d399 0%,#059669 55%,#065f46 100%)}
+.m-yn{background:linear-gradient(160deg,#22d3ee 0%,#0284c7 55%,#0e7490 100%)}
+.m-hot{background:linear-gradient(160deg,#fb7185 0%,#e11d48 50%,#ea580c 100%)}
+.m-triv{background:linear-gradient(160deg,#60a5fa 0%,#2563eb 55%,#1d4ed8 100%)}
+.m-picto{background:linear-gradient(160deg,#fdba74 0%,#f97316 50%,#ea580c 100%)}
+.m-mim{background:linear-gradient(160deg,#c084fc 0%,#8b5cf6 50%,#6d28d9 100%)}
+.m-uno{background:linear-gradient(160deg,#86efac 0%,#22c55e 50%,#15803d 100%)}
+.m-tabu{background:linear-gradient(160deg,#fb7185 0%,#e11d48 55%,#be123c 100%)}
+.m-pc{background:linear-gradient(160deg,#5eead4 0%,#14b8a6 50%,#0f766e 100%)}
+.m-geo{background:linear-gradient(160deg,#4ade80 0%,#16a34a 50%,#0e7490 100%)}
+.m-imp{background:linear-gradient(160deg,#818cf8 0%,#4f46e5 50%,#3730a3 100%)}
+.m-pueblo{background:linear-gradient(160deg,#a78bfa 0%,#5b21b6 55%,#c2410c 100%)}
+.m-ron{background:linear-gradient(160deg,#fcd34d 0%,#d97706 50%,#92400e 100%)}
+.m-culo{background:linear-gradient(160deg,#f472b6 0%,#db2777 50%,#ea580c 100%)}
+.m-bj{background:linear-gradient(160deg,#34d399 0%,#047857 55%,#064e3b 100%)}
+.m-pk{background:linear-gradient(160deg,#94a3b8 0%,#334155 50%,#7f1d1d 100%)}
+
+/* --- títulos de sección --- */
+.sect span{font-size:15px;letter-spacing:.8px;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+
+/* --- paneles --- */
+.panel{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),var(--panel);
+  border:1px solid rgba(255,255,255,.08);border-radius:20px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 20px -10px rgba(0,0,0,.6)}
+
+/* --- botones --- */
+.btn{border-radius:16px;background:linear-gradient(180deg,#2a2245,#1e1835);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 0 #0f0b1c,0 8px 16px -8px rgba(0,0,0,.6);transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 1px 0 #0f0b1c}
+.btn.primary{background:linear-gradient(180deg,#ff5aa5 0%,#ff2e88 45%,#ff6a1a 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 0 #b5124f,0 10px 22px -6px rgba(255,46,136,.55)}
+.btn.primary:active{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 0 #b5124f}
+.btn.hot{background:linear-gradient(180deg,#ff5c6c,#ff2b4a 50%,#ff7a00);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 0 #a3122a,0 10px 22px -6px rgba(255,43,74,.5)}
+.btn.ghost{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.btn.ghost:active{box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.icon{background:linear-gradient(180deg,#2c2448,#1d1733);border:1px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 3px 0 #0f0b1c}
+.icon:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 1px 0 #0f0b1c}
+
+/* --- selectores y chips --- */
+.seg button{background:linear-gradient(180deg,#221b3a,#18122b);border:1px solid rgba(255,255,255,.08);box-shadow:0 3px 0 rgba(0,0,0,.35);transition:transform .1s}
+.seg button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.seg button.on{background:linear-gradient(180deg,rgba(255,90,165,.35),rgba(255,46,136,.18));border-color:#ff5aa5;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 3px 0 #8e0f45,0 0 16px rgba(255,46,136,.25)}
+.chips button{background:linear-gradient(180deg,#221b3a,#18122b);border:1px solid rgba(255,255,255,.1);box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.chips button.on{background:linear-gradient(180deg,rgba(34,211,238,.32),rgba(0,212,255,.12));border-color:#22d3ee;box-shadow:0 2px 0 #075e75,0 0 12px rgba(0,212,255,.2)}
+
+/* --- tienda: mismas tarjetas con volumen --- */
+.sh-boost,.sh-pk,.sh-ec{box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 4px 0 rgba(0,0,0,.3),0 10px 20px -10px rgba(0,0,0,.6)}
+.sh-hero,.sh-streak{box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -5px 0 rgba(0,0,0,.2),0 12px 24px -8px rgba(0,0,0,.6)}
+.mode.sm{grid-template-columns:40px 1fr;column-gap:10px;padding:22px 12px 20px 12px}
+.mode.sm .mode-emoji{width:40px;height:40px;font-size:34px}
+.mode.sm p{padding-right:16px}
+.mode.sm .chev{width:22px;height:22px;font-size:17px;right:9px;bottom:9px}
+.mode h2 em.onl{position:absolute;left:9px;top:7px;font-size:13px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+.mode.premium h2 em.onl,.mode.locked h2 em.onl{display:none}
+.qbtn{background:linear-gradient(180deg,#2a2245,#1e1835);border:1px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 0 #0f0b1c,0 8px 16px -8px rgba(0,0,0,.6);transition:transform .1s,box-shadow .1s}
+.qbtn:active{transform:translateY(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 1px 0 #0f0b1c}
+.qbtn.surprise{background:linear-gradient(180deg,#ff5aa5 0%,#ff2e88 45%,#ff6a1a 100%);border:1px solid rgba(255,255,255,.25);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 0 #b5124f,0 10px 22px -6px rgba(255,46,136,.55)}
+.qbtn.surprise:active{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 0 #b5124f}
+#btn-lobby,.lobby{box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 20px -10px rgba(0,0,0,.6)}
