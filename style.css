@@ -1444,46 +1444,150 @@ body.store .st-only{display:block}
 .qbtn.surprise:active{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 0 #b5124f}
 #btn-lobby,.lobby{box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 20px -10px rgba(0,0,0,.6)}
 
+/* sin saludo en la portada */
+.hero .hello{display:none}
+/* tienda por secciones */
+.sh-groups{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sh-grp{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;min-height:132px;padding:14px 14px 16px;border-radius:22px;color:#fff;
+  border:1px solid rgba(255,255,255,.2);overflow:hidden;isolation:isolate;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -5px 0 rgba(0,0,0,.2),0 10px 22px -6px rgba(0,0,0,.55);transition:transform .12s}
+.sh-grp::before{content:"";position:absolute;left:0;right:0;top:0;height:55%;background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0));z-index:-1}
+.sh-grp:active{transform:translateY(3px)}
+.sh-grp .em{font-size:40px;line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));margin-bottom:auto}
+.sh-grp b{font-size:18px;font-weight:900;text-shadow:0 2px 0 rgba(0,0,0,.18);margin-top:8px}
+.sh-grp small{font-size:12px;font-weight:700;opacity:.92;display:flex;align-items:center;gap:3px;flex-wrap:wrap;padding-right:22px}
+.sh-grp small i.coin{font-size:13px}
+.sh-grp .chev{position:absolute;right:10px;bottom:10px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.25);border:1.5px solid rgba(255,255,255,.55);font-size:17px;font-weight:900;padding-bottom:2px}
+.sh-grp.done{filter:saturate(.45) brightness(.8)}
+.sh-avgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.sh-avgrid .sh-pk{flex:none;width:auto}
+.sh-avgrid .sh-ph{height:auto;aspect-ratio:3/2;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:6px;place-items:center}
+.sh-avgrid .sh-ph img{position:static;width:100%;height:auto;aspect-ratio:1;transform:none!important;border-width:2px}
+.sh-empty{text-align:center;padding:50px 20px;color:var(--mut)}
+.sh-empty div{font-size:56px}.sh-empty b{display:block;color:var(--tx);font-size:20px;margin:8px 0 4px}
+
 /* =====================================================================
-   ANIMACIONES DE LOS DIBUJOS DE CADA TARJETA (suaves y en bucle)
-   Se paran en tarjetas bloqueadas y si el móvil pide «reducir movimiento».
+   ANIMACIONES v2: una escena por juego (anims.js monta las capas)
    ===================================================================== */
-.mode .mode-emoji{will-change:transform;transform-origin:50% 60%}
-.m-board .mode-emoji{animation:a-dice 3.2s ease-in-out infinite}
-@keyframes a-dice{0%,62%,100%{transform:none}70%{transform:translateY(-10px) rotate(-90deg)}78%{transform:translateY(0) rotate(-180deg)}84%{transform:translateY(-4px) rotate(-200deg)}90%{transform:rotate(-180deg)}99.9%{transform:rotate(-180deg)}}
-.m-bottle .mode-emoji{animation:a-spin 4s cubic-bezier(.25,.1,.25,1) infinite}
-@keyframes a-spin{0%,45%{transform:rotate(0)}85%,100%{transform:rotate(720deg)}}
-.m-yn .mode-emoji{animation:a-peek 2.6s ease-in-out infinite}
-@keyframes a-peek{0%,100%{transform:rotate(0)}20%{transform:rotate(-10deg) translateX(-2px)}40%{transform:rotate(8deg) translateX(2px)}55%{transform:rotate(0)}}
-.m-hot .mode-emoji,.sh-hero .em{animation:a-fire 1.1s ease-in-out infinite alternate;transform-origin:50% 95%}
-@keyframes a-fire{0%{transform:scale(1,1) skewX(0);filter:drop-shadow(0 4px 6px rgba(0,0,0,.35)) brightness(1)}35%{transform:scale(.96,1.08) skewX(-3deg)}70%{transform:scale(1.04,.95) skewX(3deg);filter:drop-shadow(0 0 10px rgba(255,140,0,.6)) brightness(1.12)}100%{transform:scale(.98,1.06) skewX(-1deg)}}
-.sh-hero .em{animation-name:a-fire2}
+.mode-emoji.scene{--z:56px;position:relative;width:var(--z);height:var(--z);flex:0 0 var(--z);font-size:calc(var(--z)*.78);line-height:1;filter:none;overflow:visible}
+.mode.sm .mode-emoji.scene{--z:42px;font-size:calc(var(--z)*.78)}
+.scene>*{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
+.scene i{font-style:normal}
+/* la Tierra que gira de verdad */
+.scene .ag-globe{width:100%;height:100%;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.ag-land{animation:ag-rot 14s linear infinite}
+.ag-clouds{animation:ag-rot 22s linear infinite}
+@keyframes ag-rot{from{transform:translateX(0)}to{transform:translateX(-200px)}}
+/* impostor: el detective se acerca la lupa */
+.ai-det{animation:ai-lean 4s ease-in-out infinite}
+.ai-lens{font-size:.55em;animation:ai-lens 4s ease-in-out infinite;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+@keyframes ai-lean{0%,100%{transform:translate(-50%,-50%) rotate(0)}35%,60%{transform:translate(-56%,-50%) rotate(-6deg) scale(.95)}}
+@keyframes ai-lens{0%,12%,100%{transform:translate(10%,0%) scale(.7) rotate(0);opacity:.95}
+  35%{transform:translate(-30%,-45%) scale(1.25) rotate(-20deg)}
+  45%{transform:translate(-55%,-40%) scale(1.55) rotate(-25deg)}
+  55%{transform:translate(-40%,-48%) scale(1.5) rotate(-15deg)}
+  65%{transform:translate(-60%,-42%) scale(1.55) rotate(-25deg)}
+  85%{transform:translate(10%,0%) scale(.7) rotate(0)}}
+/* pictionary: el lápiz dibuja una línea */
+.scene .ap-line{width:100%;height:100%;filter:none;overflow:visible}
+.ap-line path{fill:none;stroke:#fff;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;animation:ap-draw 3s ease-in-out infinite;opacity:.95}
+@keyframes ap-draw{0%{stroke-dashoffset:100;opacity:1}55%{stroke-dashoffset:0;opacity:1}80%{stroke-dashoffset:0;opacity:1}95%,100%{stroke-dashoffset:0;opacity:0}}
+.ap-pen{font-size:.5em;left:0;top:0;transform:none;offset-path:path("M4 37 C9 29 13 41 19 32 S28 35 35 27");offset-rotate:0deg;offset-anchor:12% 88%;animation:ap-move 3s ease-in-out infinite}
+.mode:not(.sm) .ap-pen{offset-path:path("M5 48 C12 38 17 53 25 42 S37 46 46 35")}
+.mode:not(.sm) .ap-line{transform:translate(-50%,-50%) scale(1.27);}
+@keyframes ap-move{0%{offset-distance:0%}55%{offset-distance:100%}80%{offset-distance:100%;transform:rotate(0)}90%{offset-distance:100%;transform:translateY(-6px) rotate(-15deg)}100%{offset-distance:0%;transform:none}}
+/* hot: fuego con varias llamas y chispas */
+.ah-f{transform-origin:50% 95%}
+.ah-f1{animation:ah-a .9s ease-in-out infinite alternate}
+.ah-f2{font-size:.7em;margin-left:-.28em;margin-top:.08em;opacity:.85;animation:ah-b .7s ease-in-out infinite alternate}
+.ah-f3{font-size:.7em;margin-left:.28em;margin-top:.1em;opacity:.85;animation:ah-b .8s ease-in-out -.3s infinite alternate}
+@keyframes ah-a{0%{transform:translate(-50%,-50%) scale(1,1) skewX(0);filter:drop-shadow(0 0 4px rgba(255,120,0,.5))}50%{transform:translate(-50%,-52%) scale(.95,1.08) skewX(-4deg)}100%{transform:translate(-50%,-50%) scale(1.05,.94) skewX(4deg);filter:drop-shadow(0 0 12px rgba(255,160,0,.85))}}
+@keyframes ah-b{0%{transform:translate(-50%,-50%) scale(1,1) rotate(-6deg)}100%{transform:translate(-50%,-56%) scale(.9,1.12) rotate(6deg)}}
+.ah-s{width:4px;height:4px;border-radius:50%;background:#ffd166;box-shadow:0 0 6px #ff9f1c;filter:none;opacity:0;animation:ah-sp 1.6s ease-out infinite}
+.ah-s.s1{margin-left:-6px}.ah-s.s2{margin-left:7px;animation-delay:.4s}.ah-s.s3{margin-left:-1px;animation-delay:.8s}.ah-s.s4{margin-left:10px;animation-delay:1.2s;width:3px;height:3px}
+@keyframes ah-sp{0%{opacity:0;transform:translate(-50%,0) scale(1)}15%{opacity:1}100%{opacity:0;transform:translate(-50%,-160%) translateX(6px) scale(.4)}}
+/* botella que gira sobre la mesa */
+.ab-shadow,.ad-shadow,.ak-shadow{width:70%;height:14%;top:88%;border-radius:50%;background:rgba(0,0,0,.35);filter:blur(2px)}
+.ab-bot{animation:ab-spin 4.5s cubic-bezier(.15,.6,.25,1) infinite}
+@keyframes ab-spin{0%{transform:translate(-50%,-50%) rotate(0)}70%,100%{transform:translate(-50%,-50%) rotate(1080deg)}}
+/* dado que salta y rueda */
+.ad-dice{animation:ad-roll 3.2s cubic-bezier(.3,.6,.4,1) infinite}
+.ad-shadow{animation:ad-sh 3.2s cubic-bezier(.3,.6,.4,1) infinite}
+@keyframes ad-roll{0%,55%{transform:translate(-50%,-50%) rotate(0)}65%{transform:translate(-50%,-115%) rotate(-140deg)}75%{transform:translate(-50%,-50%) rotate(-270deg)}82%{transform:translate(-50%,-68%) rotate(-330deg)}90%,100%{transform:translate(-50%,-50%) rotate(-360deg)}}
+@keyframes ad-sh{0%,55%,90%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}65%{transform:translate(-50%,-50%) scale(.5);opacity:.4}82%{transform:translate(-50%,-50%) scale(.8)}}
+/* trivial: se enciende la bombilla */
+.at-brain{animation:at-think 3s ease-in-out infinite}
+.at-bulb{font-size:.5em;margin-left:.42em;margin-top:-.5em;opacity:0;animation:at-bulb 3s ease-out infinite}
+.at-ray{width:120%;height:120%;margin-left:.42em;margin-top:-.5em;border-radius:50%;background:radial-gradient(circle,rgba(255,240,150,.7),rgba(255,240,150,0) 60%);opacity:0;filter:none;animation:at-ray 3s ease-out infinite}
+@keyframes at-think{0%,100%{transform:translate(-50%,-50%) rotate(0) scale(1)}20%{transform:translate(-50%,-50%) rotate(-6deg)}40%{transform:translate(-50%,-50%) rotate(5deg)}55%{transform:translate(-50%,-50%) scale(1.1)}65%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes at-bulb{0%,45%{opacity:0;transform:translate(-50%,-30%) scale(.3)}55%{opacity:1;transform:translate(-50%,-60%) scale(1.25)}65%,85%{opacity:1;transform:translate(-50%,-55%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(.9)}}
+@keyframes at-ray{0%,50%{opacity:0;transform:translate(-50%,-55%) scale(.3)}60%{opacity:1;transform:translate(-50%,-55%) scale(1)}100%{opacity:0;transform:translate(-50%,-55%) scale(1.4)}}
+/* yo nunca: los tres monos */
+.ay-mk::before{content:"🙈";display:block;animation:ay-mk 3s steps(1) infinite}
+.ay-mk{animation:ay-pop 1s ease-out infinite}
+@keyframes ay-mk{0%{content:"🙈"}33.3%{content:"🙉"}66.6%{content:"🙊"}}
+@keyframes ay-pop{0%{transform:translate(-50%,-50%) scale(.86) rotate(-6deg)}25%{transform:translate(-50%,-50%) scale(1.06) rotate(3deg)}50%,100%{transform:translate(-50%,-50%) scale(1) rotate(0)}}
+/* mímica: gestos que van cambiando */
+.am-g::before{content:"🙆";display:block;animation:am-g 3.2s steps(1) infinite}
+.am-g{animation:ay-pop .8s ease-out infinite}
+@keyframes am-g{0%{content:"🙆"}25%{content:"🤷"}50%{content:"🙋"}75%{content:"🤦"}}
+/* tabú: sello que cae */
+.ax-stamp{animation:ax-st 2.6s cubic-bezier(.5,0,.75,0) infinite}
+.ax-dust{width:90%;height:90%;border-radius:50%;border:3px solid rgba(255,255,255,.7);filter:none;opacity:0;animation:ax-ring 2.6s ease-out infinite}
+@keyframes ax-st{0%,22%{transform:translate(-50%,-50%) scale(2.2) rotate(-20deg);opacity:0}55%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1;animation-timing-function:ease-out}60%{transform:translate(-50%,-50%) scale(.9,1.08)}66%{transform:translate(-50%,-50%) scale(1)}70%,92%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+@keyframes ax-ring{0%,52%{opacity:0;transform:translate(-50%,-50%) scale(.7)}58%{opacity:.9}80%,100%{opacity:0;transform:translate(-50%,-50%) scale(1.5)}}
+/* parchís: la bandera ondea y el dado salta */
+.ac-flag{margin-left:-.12em;transform-origin:10% 95%;animation:ac-wave 1.3s ease-in-out infinite}
+.ac-dice{font-size:.48em;margin-left:.55em;margin-top:.45em;animation:ac-hop 2.4s ease-in-out infinite}
+@keyframes ac-wave{0%,100%{transform:translate(-50%,-50%) skewY(0) rotate(0)}25%{transform:translate(-50%,-50%) skewY(-7deg) rotate(-3deg)}50%{transform:translate(-50%,-50%) skewY(3deg) rotate(1deg)}75%{transform:translate(-50%,-50%) skewY(6deg) rotate(2deg)}}
+@keyframes ac-hop{0%,60%,100%{transform:translate(-50%,-50%) rotate(0)}70%{transform:translate(-50%,-130%) rotate(180deg)}80%{transform:translate(-50%,-50%) rotate(360deg)}86%{transform:translate(-50%,-75%) rotate(360deg)}92%{transform:translate(-50%,-50%) rotate(360deg)}}
+/* el pueblo duerme: luna, estrellas y zzz */
+.au-moon{animation:au-moon 4s ease-in-out infinite}
+@keyframes au-moon{0%,100%{transform:translate(-50%,-50%) rotate(-10deg);filter:drop-shadow(0 0 2px rgba(255,230,120,.2))}50%{transform:translate(-50%,-56%) rotate(6deg);filter:drop-shadow(0 0 12px rgba(255,230,120,.8))}}
+.au-st{font-size:.28em;color:#fff6c2;filter:drop-shadow(0 0 3px #fff6c2);animation:au-tw 1.8s ease-in-out infinite}
+.au-st.t1{margin-left:-.5em;margin-top:-.45em}.au-st.t2{margin-left:.55em;margin-top:-.2em;animation-delay:.6s}.au-st.t3{margin-left:-.35em;margin-top:.45em;animation-delay:1.2s;font-size:.22em}
+@keyframes au-tw{0%,100%{opacity:.2;transform:translate(-50%,-50%) scale(.6)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(45deg)}}
+.au-z{font-size:.3em;font-weight:900;color:#fff;margin-left:.5em;opacity:0;animation:au-z 3s ease-out infinite}
+.au-z.z2{animation-delay:1.5s}
+@keyframes au-z{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translate(10%,-200%) scale(1.3)}}
+/* ¡última!: abanico de cartas */
+.au-c{width:.5em;height:.72em;border-radius:.08em;border:.04em solid #fff;font-size:1em;color:#fff;font-weight:900;display:grid;place-items:center;font-size:.9em;transform-origin:50% 120%;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.au-c{width:calc(var(--z)*.44);height:calc(var(--z)*.64);font-size:0}
+.au-c.c1{background:#e53935;animation:au-f1 3s ease-in-out infinite}
+.au-c.c2{background:#fbc02d;animation:au-f2 3s ease-in-out infinite}
+.au-c.c3{background:#1e88e5;animation:au-f3 3s ease-in-out infinite}
+.au-c::before{content:"";position:absolute;inset:18% 15%;border-radius:50%;background:rgba(255,255,255,.85);transform:rotate(-30deg)}
+@keyframes au-f1{0%,100%{transform:translate(-50%,-50%) rotate(0)}30%,70%{transform:translate(-50%,-50%) rotate(-28deg)}}
+@keyframes au-f2{0%,100%{transform:translate(-50%,-50%) rotate(0)}30%,70%{transform:translate(-50%,-56%) rotate(0)}}
+@keyframes au-f3{0%,100%{transform:translate(-50%,-50%) rotate(0)}30%,70%{transform:translate(-50%,-50%) rotate(28deg)}}
+/* cabeza de ron: brindis */
+.ar-g{font-size:.7em;transform-origin:50% 100%}
+.ar-l{animation:ar-l 2.4s ease-in-out infinite}
+.ar-r{animation:ar-r 2.4s ease-in-out infinite}
+@keyframes ar-l{0%,100%{transform:translate(-110%,-40%) rotate(0)}40%{transform:translate(-78%,-55%) rotate(18deg)}48%{transform:translate(-84%,-50%) rotate(12deg)}60%{transform:translate(-78%,-55%) rotate(18deg)}}
+@keyframes ar-r{0%,100%{transform:translate(10%,-40%) rotate(0)}40%{transform:translate(-22%,-55%) rotate(-18deg)}48%{transform:translate(-16%,-50%) rotate(-12deg)}60%{transform:translate(-22%,-55%) rotate(-18deg)}}
+.ar-spark{width:60%;height:60%;margin-top:-.35em;background:radial-gradient(circle,#fff 0 8%,rgba(255,230,120,.9) 9% 14%,transparent 15%),conic-gradient(from 0deg,transparent 0 10%,rgba(255,230,120,.9) 10% 13%,transparent 13% 35%,rgba(255,230,120,.9) 35% 38%,transparent 38% 60%,rgba(255,230,120,.9) 60% 63%,transparent 63% 85%,rgba(255,230,120,.9) 85% 88%,transparent 88%);border-radius:50%;opacity:0;filter:none;animation:ar-sp 2.4s ease-out infinite}
+@keyframes ar-sp{0%,38%{opacity:0;transform:translate(-50%,-50%) scale(.2)}44%{opacity:1;transform:translate(-50%,-50%) scale(1)}60%,100%{opacity:0;transform:translate(-50%,-50%) scale(1.3) rotate(30deg)}}
+/* culo: rebota */
+.ak-p{transform-origin:50% 100%;animation:ak-b 1.6s cubic-bezier(.3,0,.5,1) infinite}
+.ak-shadow{animation:ak-sh 1.6s cubic-bezier(.3,0,.5,1) infinite}
+@keyframes ak-b{0%,100%{transform:translate(-50%,-50%) scale(1.12,.86)}15%{transform:translate(-50%,-50%) scale(.94,1.08)}45%{transform:translate(-50%,-95%) scale(1,1) rotate(-8deg)}75%{transform:translate(-50%,-50%) scale(.98,1.04)}85%{transform:translate(-50%,-50%) scale(1.12,.86)}}
+@keyframes ak-sh{0%,85%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}45%{transform:translate(-50%,-50%) scale(.55);opacity:.4}}
+/* blackjack: la carta se da la vuelta */
+.aj-c{backface-visibility:hidden;filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));color:#fff}
+.aj-b{color:#93c5fd;animation:aj-b 3.6s ease-in-out infinite}
+.aj-f{color:#fff;animation:aj-f 3.6s ease-in-out infinite}
+@keyframes aj-b{0%,30%{transform:translate(-50%,-50%) perspective(160px) rotateY(0)}50%,85%{transform:translate(-50%,-50%) perspective(160px) rotateY(180deg)}100%{transform:translate(-50%,-50%) perspective(160px) rotateY(360deg)}}
+@keyframes aj-f{0%,30%{transform:translate(-50%,-50%) perspective(160px) rotateY(-180deg)}50%,85%{transform:translate(-50%,-50%) perspective(160px) rotateY(0) scale(1.06)}100%{transform:translate(-50%,-50%) perspective(160px) rotateY(180deg)}}
+/* póker: los cuatro palos */
+.ak-suit::before{content:"♠️";display:block;animation:ak-s 3.6s steps(1) infinite}
+.ak-suit{animation:ak-flip .9s ease-in-out infinite}
+@keyframes ak-s{0%{content:"♠️"}25%{content:"♥️"}50%{content:"♣️"}75%{content:"♦️"}}
+@keyframes ak-flip{0%,70%,100%{transform:translate(-50%,-50%) perspective(160px) rotateY(0)}85%{transform:translate(-50%,-50%) perspective(160px) rotateY(90deg) scale(.9)}}
+.ak-shine{width:100%;height:100%;border-radius:20%;filter:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.65) 50%,transparent 65%);background-size:250% 100%;mix-blend-mode:overlay;animation:ak-sh2 3.6s linear infinite}
+@keyframes ak-sh2{0%{background-position:150% 0}40%,100%{background-position:-50% 0}}
+/* quietas en tarjetas bloqueadas o si se pide menos movimiento */
+.mode.premium .scene *,.mode.premium .scene *::before,.mode.locked .scene *,.mode.locked .scene *::before{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){.scene *,.scene *::before,.sh-hero .em{animation:none!important}}
+.sh-hero .em{animation:a-fire2 1.1s ease-in-out infinite alternate;transform-origin:50% 95%}
 @keyframes a-fire2{0%{transform:rotate(-12deg) scale(1,1)}50%{transform:rotate(-10deg) scale(.96,1.07)}100%{transform:rotate(-13deg) scale(1.03,.96)}}
-.m-triv .mode-emoji{animation:a-beat 1.8s ease-in-out infinite}
-@keyframes a-beat{0%,40%,100%{transform:scale(1)}10%{transform:scale(1.14)}20%{transform:scale(1)}30%{transform:scale(1.08)}}
-.m-picto .mode-emoji{animation:a-draw 1.6s ease-in-out infinite;transform-origin:20% 90%}
-@keyframes a-draw{0%{transform:translate(0,0) rotate(0)}20%{transform:translate(4px,-3px) rotate(-6deg)}40%{transform:translate(-3px,2px) rotate(4deg)}60%{transform:translate(5px,1px) rotate(-4deg)}80%{transform:translate(-2px,-2px) rotate(3deg)}100%{transform:translate(0,0) rotate(0)}}
-.m-mim .mode-emoji{animation:a-sway 2.4s ease-in-out infinite}
-@keyframes a-sway{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.06)}}
-.m-uno .mode-emoji,.m-bj .mode-emoji,.m-pk .mode-emoji{animation:a-flip 3.4s ease-in-out infinite}
-.m-bj .mode-emoji{animation-delay:-1.1s}.m-pk .mode-emoji{animation-delay:-2.2s}
-@keyframes a-flip{0%,60%,100%{transform:perspective(200px) rotateY(0)}80%{transform:perspective(200px) rotateY(180deg) scale(1.05)}99%{transform:perspective(200px) rotateY(360deg)}}
-.m-tabu .mode-emoji{animation:a-no 2.4s ease-in-out infinite}
-@keyframes a-no{0%,50%,100%{transform:translateX(0)}60%{transform:translateX(-4px) rotate(-8deg)}70%{transform:translateX(4px) rotate(8deg)}80%{transform:translateX(-3px) rotate(-5deg)}90%{transform:translateX(2px) rotate(3deg)}}
-.m-imp .mode-emoji{animation:a-spy 3s ease-in-out infinite}
-@keyframes a-spy{0%,100%{transform:translateX(0) scaleX(1)}25%{transform:translateX(-4px) scaleX(1)}45%{transform:translateX(-4px) scaleX(-1)}70%{transform:translateX(4px) scaleX(-1)}90%{transform:translateX(4px) scaleX(1)}}
-.m-pc .mode-emoji{animation:a-wave 1.4s ease-in-out infinite;transform-origin:15% 90%}
-@keyframes a-wave{0%,100%{transform:skewY(0) rotate(0)}25%{transform:skewY(-6deg) rotate(-3deg)}75%{transform:skewY(5deg) rotate(2deg)}}
-/* la Tierra gira: va pasando por las tres caras del globo */
-.m-geo .mode-emoji{font-size:0!important}
-.m-geo .mode-emoji::before{content:"🌍";font-size:44px;line-height:1;display:block;animation:a-globe 2.4s steps(1) infinite}
-@keyframes a-globe{0%{content:"🌍"}33.3%{content:"🌎"}66.6%{content:"🌏"}}
-.m-pueblo .mode-emoji{animation:a-moon 4s ease-in-out infinite}
-@keyframes a-moon{0%,100%{transform:rotate(-10deg) translateY(0);filter:drop-shadow(0 0 0 rgba(255,230,120,0))}50%{transform:rotate(8deg) translateY(-3px);filter:drop-shadow(0 0 10px rgba(255,230,120,.7))}}
-.m-ron .mode-emoji{animation:a-slosh 2.2s ease-in-out infinite;transform-origin:50% 100%}
-@keyframes a-slosh{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}50%{transform:rotate(6deg)}75%{transform:rotate(-3deg)}}
-.m-culo .mode-emoji{animation:a-bounce 1.6s ease-in-out infinite;transform-origin:50% 100%}
-@keyframes a-bounce{0%,100%{transform:translateY(0) scale(1,1)}30%{transform:translateY(-7px) scale(.96,1.05)}55%{transform:translateY(0) scale(1.08,.92)}70%{transform:translateY(0) scale(1)}}
-/* quietos si están bloqueados o el sistema pide menos movimiento */
-.mode.premium .mode-emoji,.mode.locked .mode-emoji,.mode.premium .mode-emoji::before,.mode.locked .mode-emoji::before{animation:none}
-@media (prefers-reduced-motion:reduce){.mode .mode-emoji,.mode .mode-emoji::before,.sh-hero .em{animation:none!important}}
