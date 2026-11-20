@@ -1335,3 +1335,4 @@ body.store .st-only{display:block}
 .io-seats span.ok{opacity:1;box-shadow:inset 0 0 0 2px #2ed69a}
 .io-seats span.ok::after{content:"✓";color:#2ed69a;font-weight:900}
 .io-seats .av{width:26px;height:26px}
+.mode h2 em.onl{font-style:normal;font-size:.8em;vertical-align:middle}

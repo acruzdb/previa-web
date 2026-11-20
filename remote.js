@@ -64,7 +64,8 @@ window.NetTriv=(function(){
       h+='<div class="nt-opts">'+q.opts.map((o,i)=>{let cl="nt-opt";
         if(rev){if(i===q.right)cl+=" right";else if(i===q.pick)cl+=" wrong"}else if(ctx.picked===i)cl+=" sel";
         return '<button class="'+cl+'" data-i="'+i+'"'+(!mine||rev||ctx.picked!=null?" disabled":"")+'><span>'+"ABC"[i]+'</span>'+esc(o)+'</button>'}).join("")+'</div>';
-      if(rev)h+='<p class="nt-foot nt-res">'+(q.pick===q.right?_t("✅ ¡Correcto!"):q.pick<0?_t("⏱️ Se acabó el tiempo"):_t("❌ No era esa"))+'</p>';
+      if(rev){h+='<p class="nt-foot nt-res">'+(q.pick===q.right?_t("✅ ¡Correcto!"):q.pick<0?_t("⏱️ Se acabó el tiempo"):_t("❌ No era esa"))+'</p>';
+        if(q.ans&&q.ans!==q.opts[q.right])h+='<p class="nt-foot">'+esc(q.ans)+'</p>'}
       else h+='<p class="nt-foot">'+(mine?(q.wedge&&!q.has?_t("🧀 Si aciertas te llevas el quesito"):_t("Si aciertas, sigues tirando")):'⏳ '+esc(cur.name)+_t(" está eligiendo…"))+'</p>';
       P.innerHTML=h+'</div>';
       if(!rev){
