@@ -34,7 +34,10 @@
     {id:"cp_fiesta",kind:"cards",go:"yn-setup",price:100,decks:[["YONUNCA","fiesta",0]]},
     {id:"cp_salseo",kind:"cards",go:"yn-setup",price:100,decks:[["YONUNCA","salseo",0]]},
     {id:"cp_tablero",kind:"cards",go:"board-setup",price:200,decks:[["BOARD","yonunca",40],["BOARD","bebe",40],["BOARD","reto",40],["BOARD","verdad",40],["BOARD","votacion",40],["BOARD","evento",40]]},
-    {id:"cp_botella",kind:"cards",go:"bottle-setup",price:120,decks:[["BOTELLA","verdad",40],["BOTELLA","reto",40]]}
+    {id:"cp_botella",kind:"cards",go:"bottle-setup",price:120,decks:[["BOTELLA","verdad",40],["BOTELLA","reto",40]]},
+    // temas de la app (el clásico oscuro/claro es gratis)
+    {id:"th_verbena",kind:"theme",key:"verbena",go:"settings",price:150},
+    {id:"th_bloques",kind:"theme",key:"bloques",go:"settings",price:150}
   ];
   const item=id=>ITEMS.find(i=>i.id===id)||null;
 
@@ -121,7 +124,9 @@
   function catLocked(W,game,key){const it=catItem(game,key);return !!it&&!owns(W,it.id)}
   function deckItem(obj,key){return ITEMS.find(it=>it.kind==="cards"&&it.decks.some(d=>d[0]===obj&&d[1]===key))||null}
 
-  const E={sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem,catItem,catLocked};
+  function themeItem(key){return ITEMS.find(it=>it.kind==="theme"&&it.key===key)||null}
+  function themeLocked(W,key){const it=themeItem(key);return !!it&&!owns(W,it.id)}
+  const E={themeItem,themeLocked,sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem,catItem,catLocked};
   if(typeof module!=="undefined"&&module.exports)module.exports=E;
   root.Economy=E;
 })(typeof window!=="undefined"?window:globalThis);
