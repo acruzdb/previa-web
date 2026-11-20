@@ -617,6 +617,7 @@ button.pd.on{opacity:1;outline:3px solid var(--pri);outline-offset:2px}
 [data-theme="light"] .peek{background:#1d1530}
 [data-theme="light"] .toast{background:#1d1530;color:#fff}
 [data-theme="light"] .dot{border-color:rgba(0,0,0,.15)}
+[data-theme="light"] .card,[data-theme="light"] .mcard:not(.darktxt){color:#fff}
 [data-theme="light"] .mode{border-color:rgba(0,0,0,.06);box-shadow:0 4px 14px rgba(40,20,80,.12)}
 
 @media (min-width:600px){
