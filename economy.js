@@ -36,8 +36,8 @@
     {id:"cp_tablero",kind:"cards",go:"board-setup",price:200,decks:[["BOARD","yonunca",40],["BOARD","bebe",40],["BOARD","reto",40],["BOARD","verdad",40],["BOARD","votacion",40],["BOARD","evento",40]]},
     {id:"cp_botella",kind:"cards",go:"bottle-setup",price:120,decks:[["BOTELLA","verdad",40],["BOTELLA","reto",40]]},
     // temas de la app (el clásico oscuro/claro es gratis)
-    {id:"th_verbena",kind:"theme",key:"verbena",go:"settings",price:150},
-    {id:"th_bloques",kind:"theme",key:"bloques",go:"settings",price:150}
+    {id:"th_periodico",kind:"theme",key:"periodico",go:"settings",price:150},
+    {id:"th_arcade",kind:"theme",key:"arcade",go:"settings",price:150}
   ];
   const item=id=>ITEMS.find(i=>i.id===id)||null;
 
@@ -74,6 +74,9 @@
     const W=Object.assign({coins:CFG.START,owned:{},day:"",ads:0,plays:0,starts:0,run:0,last:""},raw||{});
     if(!W.owned||typeof W.owned!=="object")W.owned={};
     if(typeof W.coins!=="number"||!(W.coins>=0))W.coins=0;
+    // temas renombrados en la v5.5 (lo comprado se conserva)
+    if(W.owned.th_verbena){W.owned.th_periodico=1;delete W.owned.th_verbena}
+    if(W.owned.th_bloques){W.owned.th_arcade=1;delete W.owned.th_bloques}
     roll(W,today);
     return W;
   }
