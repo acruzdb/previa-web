@@ -1715,3 +1715,40 @@ body.store .st-only{display:block}
 @media (prefers-reduced-motion:reduce){#splash *{animation-duration:.01s!important;animation-delay:0s!important}}
 
 :root[data-theme="light"]:not([data-skin]) .panel.rule{color:#9b1c31;border-color:#f2b8c2}
+
+/* =====================================================================
+   ESCENAS DE LAS SECCIONES (portada de los temas Periódico y Gamer)
+   ===================================================================== */
+/* para beber: dos jarras que brindan y salpican */
+.sd-m{font-size:.66em}
+.sd-l{margin-left:-.42em;transform-origin:80% 90%;animation:sd-l 2.4s ease-in-out infinite}
+.sd-r{margin-left:.42em;transform-origin:20% 90%;animation:sd-r 2.4s ease-in-out infinite}
+@keyframes sd-l{0%,100%{transform:translate(-50%,-50%) rotate(-8deg)}40%{transform:translate(-36%,-56%) rotate(16deg)}48%{transform:translate(-40%,-54%) rotate(10deg)}60%{transform:translate(-50%,-50%) rotate(-4deg)}}
+@keyframes sd-r{0%,100%{transform:translate(-50%,-50%) scaleX(-1) rotate(-8deg)}40%{transform:translate(-64%,-56%) scaleX(-1) rotate(16deg)}48%{transform:translate(-60%,-54%) scaleX(-1) rotate(10deg)}60%{transform:translate(-50%,-50%) scaleX(-1) rotate(-4deg)}}
+.sd-sp{width:.09em;height:.09em;border-radius:50%;background:#fff3b0;box-shadow:0 0 .1em #ffd04a;top:18%;opacity:0;filter:none;animation:sd-sp 2.4s ease-out infinite}
+.sd-sp.s1{--x:-.35em}.sd-sp.s2{--x:0em}.sd-sp.s3{--x:.35em}
+@keyframes sd-sp{0%,38%{opacity:0;transform:translate(-50%,0)}42%{opacity:1}70%,100%{opacity:0;transform:translate(calc(-50% + var(--x)),-.45em)}}
+.sd-fo{width:.18em;height:.14em;border-radius:50%;background:#fffdf6;top:22%;opacity:0;filter:none;animation:sd-fo 2.4s ease-out infinite}
+@keyframes sd-fo{0%,40%{opacity:0;transform:translate(-50%,0) scale(.5)}45%{opacity:1}75%,100%{opacity:0;transform:translate(-50%,.5em) scale(1)}}
+/* cartas: tres naipes que se abren en abanico */
+.sc-c{width:.5em;height:.7em;border-radius:.06em;background:#fff;color:#111;font-size:1em;font-style:normal;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font:700 .3em/1 system-ui,sans-serif;width:1.65em;height:2.3em;box-shadow:0 .08em .2em rgba(0,0,0,.35);transform-origin:50% 115%;border:.04em solid #ddd}
+.sc-c b{font-size:.8em;margin-bottom:.1em}
+.sc-c.c2,.sc-c.c3{color:#d62828}
+.sc-c.c1{animation:sc-1 3s ease-in-out infinite}.sc-c.c2{animation:sc-2 3s ease-in-out infinite}.sc-c.c3{animation:sc-3 3s ease-in-out infinite}
+@keyframes sc-1{0%,15%,100%{transform:translate(-50%,-50%) rotate(0)}40%,75%{transform:translate(-50%,-50%) rotate(-24deg)}}
+@keyframes sc-2{0%,15%,100%{transform:translate(-50%,-50%) rotate(0)}40%,75%{transform:translate(-50%,-56%) rotate(0)}}
+@keyframes sc-3{0%,15%,100%{transform:translate(-50%,-50%) rotate(0)}40%,75%{transform:translate(-50%,-50%) rotate(24deg)}}
+/* más juegos: el cerebro con chispas que giran alrededor */
+.sb-br{animation:sb-br 2.6s ease-in-out infinite}
+@keyframes sb-br{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.08)}}
+.sb-o{font-size:.26em;color:#ffe066;filter:drop-shadow(0 0 3px #ffd000);animation:sb-orb 3.6s linear infinite}
+.sb-o.o2{animation-delay:-1.2s}.sb-o.o3{animation-delay:-2.4s}
+@keyframes sb-orb{from{transform:translate(-50%,-50%) rotate(0) translateX(2.2em) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg) translateX(2.2em) rotate(-360deg)}}
+/* online: el móvil con ondas de señal */
+.sn-ph{animation:sn-ph 2.4s ease-in-out infinite}
+@keyframes sn-ph{0%,100%{transform:translate(-50%,-50%) rotate(-6deg)}50%{transform:translate(-50%,-54%) rotate(4deg)}}
+.sn-w{width:60%;height:60%;border-radius:50%;border:.05em solid rgba(255,255,255,.85);filter:none;opacity:0;animation:sn-w 2.4s ease-out infinite}
+.sn-w.w2{animation-delay:.8s}.sn-w.w3{animation-delay:1.6s}
+@keyframes sn-w{0%{opacity:.9;transform:translate(-50%,-50%) scale(.6)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.7)}}
+[data-skin="periodico"] .sn-w{border-color:rgba(22,20,18,.7)}
