@@ -25,13 +25,13 @@ window.Uno=(function(){
     });
     h+='<div class="ut-center"><button class="uno-pile" data-act="draw"'+(myTurn&&!me.hidden?"":" disabled")+('>'+'<span>'+'<b>'+_t('¡Última!')+'</b>')+pub.deckN+'</span></button>'+
       card(pub.top,"top")+'<div class="uno-col"><span class="uno-dot" style="background:'+COL[pub.color].c+'"></span>'+COL[pub.color].n+'<span class="uno-dir">'+(pub.dir>0?"↻":"↺")+'</span></div></div>';
-    if(pub.pend>0)h+='<div class="ut-pend">+'+pub.pend+' 🍻</div>';
+    if(pub.pend>0)h+='<div class="ut-pend">+'+pub.pend+(window.__na?' 🃏':' 🍻')+'</div>';
     h+='<div class="ut-log">'+esc(pub.log||"")+'</div></div>';
     // estado
     if(pub.over){
       h+=('<div class="ut-end">'+'<b>'+_t('🏆 Gana '))+esc(pub.winner)+'</b>'+(pub.rows||[]).map(r=>'<div style="border-left:5px solid '+r.c+'"><span>'+esc(r.n)+' · '+esc(r.val)+'</span><span>'+esc(r.drink)+'</span></div>').join("")+(pub.note?'<small>'+esc(pub.note)+'</small>':'')+'</div>';
     } else if(myTurn&&pub.pend>0&&!me.hidden){
-      h+=('<div class="uno-msg warn">'+_t('¡Te han echado un '))+pub.pendT+_t('! Devuélvelo con ')+(pub.pendT==="+4"||!pub.mix?_t("otro ")+pub.pendT:_t("un +2 o un +4"))+_t(' o bebe ')+pub.pend+'.</div>';
+      h+=('<div class="uno-msg warn">'+_t('¡Te han echado un '))+pub.pendT+_t('! Devuélvelo con ')+(pub.pendT==="+4"||!pub.mix?_t("otro ")+pub.pendT:_t("un +2 o un +4"))+(window.__na?_t(' o roba ')+pub.pend:_t(' o bebe ')+pub.pend)+'.</div>';
     } else h+='<div class="ut-turn'+(myTurn?" go":"")+'">'+(myTurn?(me.hidden?"":_t("🎯 ¡Te toca!")):(_t("⏳ Le toca a ")+"<b>")+esc(cur.name)+"</b>")+'</div>';
     // mi mano
     const me0=P[mi];
@@ -41,7 +41,7 @@ window.Uno=(function(){
       const H=me.hand.slice().sort((a,b)=>"rygbw".indexOf(a.c)-"rygbw".indexOf(b.c)||String(a.v).localeCompare(String(b.v)));
       h+='<div class="ut-hand'+(H.length>8?" tight":"")+'">'+H.map(k=>card(k,pub.over||!myTurn?"":k.ok?"ok":"no").replace('<span class="uc','<span data-act="play" class="uc')).join("")+'</div>';
       if(myTurn){
-        const lbl=pub.pend>0?_t("🍻 Robar y beber ")+pub.pend:me.drew?_t("⏭️ Pasar"):_t("🃏 Robar");
+        const lbl=pub.pend>0?(window.__na?_t("🃏 Robar ")+pub.pend:_t("🍻 Robar y beber ")+pub.pend):me.drew?_t("⏭️ Pasar"):_t("🃏 Robar");
         const anyOk=me.hand.some(k=>k.ok);
         h+='<div class="uno-btns">'+(me.canShout?'<button class="btn shout'+(me.shout?" done":"")+'" data-act="shout">'+(me.shout?_t("✅ ¡Dicho!"):_t("📢 ¡Última!"))+'</button>':'')+
           '<button class="btn '+(pub.pend>0||!anyOk?"primary":"")+'" data-act="draw">'+lbl+'</button></div>';

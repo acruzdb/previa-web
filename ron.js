@@ -17,7 +17,7 @@ window.Ron=(function(){
     return '<span class="rc '+k.s+(extra?" "+extra:"")+'"'+(act?' data-act="'+act+'"':'')+(k.id!=null?' data-id="'+k.id+'"':'')+' style="--sc:'+S.c+'">'+
       '<b class="rn">'+k.n+'</b><span class="rs">'+(k.s==="b"?BASTO:S.em)+'</span>'+(FIG[k.n]?'<small class="rf">'+FIG[k.n]+'</small>':'')+'<b class="rn2">'+k.n+'</b></span>';
   }
-  const back=extra=>'<span class="rc back'+(extra?" "+extra:"")+'"><span class="rbk">🥃</span></span>';
+  const back=extra=>'<span class="rc back'+(extra?" "+extra:"")+'"><span class="rbk">'+(window.__na?'🃏':'🥃')+'</span></span>';
   // pub: {players:[{name,av,color,n,up:[cards],down,out}],turn,dir,pile:[top cards],pileN,deckN,discN,attack,log,over,loser,rank,rows,note}
   // me:  {name,hand:[{n,s,id,ok}],up,down,stage,more,four:[n],mustEat,canEat,hidden,needFlip}   ui: {sel:[ids]}
   function view(pub,me,ui){
@@ -32,7 +32,7 @@ window.Ron=(function(){
     });
     // centro: robar, montón y descartes
     const pile=pub.pile||[];
-    h+='<div class="ut-center rt-center"><div class="rt-deck"><span class="rc back"><span class="rbk">🥃</span></span><small>'+pub.deckN+'</small></div>'+
+    h+='<div class="ut-center rt-center"><div class="rt-deck"><span class="rc back"><span class="rbk">'+(window.__na?'🃏':'🥃')+'</span></span><small>'+pub.deckN+'</small></div>'+
       '<div class="rt-pile">'+(pile.length?pile.map((c,i)=>card(c,"p"+(pile.length-1-i))).join(""):('<span class="rc empty">'+_t('vacío')+'</span>'))+'</div>'+
       ('<div class="rt-info">'+'<span>'+_t('Montón '))+(pub.pileN||0)+('</span>'+'<span>'+_t('Fuera '))+(pub.discN||0)+'</span><span class="uno-dir">'+(pub.dir>0?"↻":"↺")+'</span></div></div>';
     if(pub.attack)h+='<div class="ut-pend rt-att">'+(pub.attack===3?_t("⚠️ Solo vale un 3"):_t("⚠️ Responde con un 1 o un 3"))+'</div>';
@@ -61,7 +61,7 @@ window.Ron=(function(){
 
         if(nSel)h+=('<button class="btn primary" data-act="play">'+_t('Echar '))+nSel+(nSel>1?_t(" cartas"):_t(" carta"))+'</button>';
         if(me.stage==="more")h+=('<button class="btn" data-act="end">'+_t('⏭️ Terminar turno')+'</button>');
-        else if(me.canEat&&!me.needFlip)h+='<button class="btn'+(me.mustEat?" primary":"")+('" data-act="eat">'+_t('🍻 Comerme el montón')+'</button>');
+        else if(me.canEat&&!me.needFlip)h+='<button class="btn'+(me.mustEat?" primary":"")+('" data-act="eat">'+(window.__na?_t('🃏 Comerme el montón'):_t('🍻 Comerme el montón'))+'</button>');
         if(me.four&&me.four.length&&me.stage!=="more")h+='<button class="btn ghost" data-act="four" data-c="'+me.four[0]+('">'+_t('🗑️ Descartar cuatro '))+me.four[0]+'</button>';
         h+='</div>';
       }

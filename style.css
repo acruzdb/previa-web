@@ -1807,3 +1807,70 @@ body.store .coinchip.st-only{display:inline-flex}
 .acd .acd-chip{animation:acd-chip 3.6s ease-in-out infinite}
 @keyframes acd-chip{0%,100%{transform:translate(132px,118px)}50%{transform:translate(132px,108px)}}
 @media (prefers-reduced-motion:reduce){.acd *{animation:none!important}}
+/* ===== Sala de juego: avatares repartidos en casillas iguales (todos los temas) ===== */
+.lobby-grid{display:grid;grid-template-columns:repeat(var(--cols,5),minmax(0,1fr));gap:6px 4px;padding:4px 2px 2px;overflow:visible;justify-items:center}
+.lobby-grid .lobby-empty{grid-column:2 / -1;align-self:center;justify-self:start}
+.lp{width:100%;max-width:68px;flex:none;min-width:0}
+.lp img,.lp .plus{width:min(52px,100%);height:auto;aspect-ratio:1}
+.lp span{max-width:100%}
+.lobby-h h3{white-space:nowrap}
+.lobby-h span{display:flex;align-items:center;gap:0;min-width:0}
+.lobby-h .lh-edit,.lobby-h .lh-pen{font-style:normal}
+.lobby-h .lh-pen{display:none;margin-left:2px}
+@media (max-width:380px){.lobby-h .lh-edit{display:none}.lobby-h .lh-pen{display:inline}}
+html[data-skin="periodico"] #s-home .lobby{padding:10px 6px 12px}
+[data-skin="dinos"] .lp{width:100%;flex-basis:auto}
+.lobby-h .lh-edit,.lobby-h .lh-pen{margin-left:4px}
+/* ===== Modo sin alcohol: fuera los juegos de beber y todo lo que hable de tragos ===== */
+html.noalc .na-hide{display:none!important}
+html.noalc .quick{grid-template-columns:1fr!important}
+html.noalc .na-drink{display:none!important}
+html.noalc .spl-mugs{visibility:hidden}
+
+/* ===== Revisión de tamaños (v6.1) ===== */
+/* móviles plegables abiertos y tablets (pantalla táctil ancha): la app usa más ancho */
+@media (min-width:600px) and (pointer:coarse){
+  #app{max-width:680px}
+}
+/* móviles estrechos (320-380 px): cabecera más compacta para que el logo no se pise con los botones */
+@media (max-width:380px){
+  html #s-home .topbar .logo{font-size:23px!important;letter-spacing:1px!important}
+  html[data-skin="dinos"] #s-home .topbar .logo{font-size:26px!important}
+  html[data-skin="periodico"] #s-home .topbar .logo{font-size:28px!important}
+  html #s-home .topbtns{gap:5px!important}
+  html #s-home .topbtns .icon{width:36px!important;height:36px!important;font-size:17px!important}
+  html #s-home .topbar .coinchip{height:36px!important;padding:0 8px!important;font-size:14px!important}
+  .qbtn{padding:9px 8px;gap:6px}
+  .qbtn .qem{font-size:19px}
+  .qbtn b{font-size:12.5px;white-space:normal;overflow:visible}
+  .qbtn small{font-size:10.5px;white-space:normal}
+  html[data-skin] .qbtn b{font-size:12.5px!important}
+}
+@media (max-width:340px){
+  html #s-home .topbar .logo{font-size:20px!important}
+  html #s-home .topbtns .icon{width:33px!important;height:33px!important;font-size:15px!important}
+}
+@media (max-width:380px){
+  .skm-periodico .pp-date,.skm-comic .pp-date{font-size:8.5px!important;letter-spacing:.3px!important}
+  html[data-skin="arcade"] .qbtn b{letter-spacing:.5px!important}
+  html[data-skin="arcade"] .gm-pn small{letter-spacing:1px}
+}
+/* mesas de cartas (Cabeza de ron, ¡Última!, Culo…): más grandes en móviles altos y sin pisarse en los estrechos */
+.ut-table{height:min(54vh,420px,86vw)}
+@media (max-width:380px){
+  .ut-seat{width:62px}
+  .ut-seat .av{width:36px;height:36px}
+  .ut-seat .nm{font-size:11px;max-width:62px}
+  .rt-center{top:69%!important;gap:8px!important}
+  .rt-deck .rc{width:38px;height:56px}
+  .rt-info{font-size:10.5px}
+  .ut-center .uno-pile,.ut-center .uc{width:56px;height:84px}
+}
+/* títulos largos en pantallas estrechas: en una línea */
+@media (max-width:380px){
+  .topbar h1{font-size:19px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  #s-imp-setup .topbar h1,#s-imp .topbar h1{font-size:19px!important}
+}
+/* subtítulo de Yo nunca y similares: que se lea entero */
+.screen .topsub,.screen .subhead{white-space:normal}
+.center-turn .nm{white-space:normal;text-align:center;line-height:1.3}

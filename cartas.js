@@ -6,7 +6,7 @@
 window.Cartas=(function(){
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const av=(p,cls)=>'<img class="av '+(cls||"")+'" alt="" src="'+avatarURL(p.av)+'" style="border-color:'+p.color+'">';
-  const back=extra=>'<span class="rc back'+(extra?" "+extra:"")+'"><span class="rbk">🥃</span></span>';
+  const back=extra=>'<span class="rc back'+(extra?" "+extra:"")+'"><span class="rbk">'+(window.__na?'🃏':'🥃')+'</span></span>';
   // ---------- baraja americana ----------
   const FS={s:{em:"♠",c:"#1a1a2e"},h:{em:"♥",c:"#d00000"},d:{em:"♦",c:"#d00000"},c:{em:"♣",c:"#1a1a2e"}};
   const RL={11:"J",12:"Q",13:"K",14:"A"};
@@ -84,12 +84,12 @@ window.Cartas=(function(){
       let st=p.res?'<span class="bj-res '+p.res+'">'+esc(p.resT)+'</span>':p.st==="bust"?('<span class="bj-res lose">'+_t('💥 Se pasa')+'</span>'):p.st==="bj"?('<span class="bj-res bj">'+_t('⭐ Blackjack')+'</span>'):p.st==="stand"?('<span class="bj-res st">'+_t('✋ Se planta')+'</span>'):'';
       let bet="";
       if(pub.stage==="bet"){
-        if(me.local||mine)bet='<span class="bj-bet"><button data-act="bet" data-c="'+(i*10+Math.max(1,p.bet-1))+'"'+(p.bet<=1?" disabled":"")+'>−</button><b>🥃 '+p.bet+'</b><button data-act="bet" data-c="'+(i*10+Math.min(3,p.bet+1))+'"'+(p.bet>=3?" disabled":"")+'>+</button></span>'+(!me.local?'<button class="bj-ready'+(p.ready?" on":"")+'" data-act="ready">'+(p.ready?_t("✅ Listo"):_t("Listo"))+'</button>':"");
-        else bet='<span class="bj-bet"><b>🥃 '+p.bet+'</b>'+(p.ready?' ✅':' ⏳')+'</span>';
-      } else bet='<span class="bj-bet"><b>🥃 '+p.bet+'</b></span>';
+        if(me.local||mine)bet='<span class="bj-bet"><button data-act="bet" data-c="'+(i*10+Math.max(1,p.bet-1))+'"'+(p.bet<=1?" disabled":"")+'>−</button><b>'+(window.__na?'🔘 ':'🥃 ')+p.bet+'</b><button data-act="bet" data-c="'+(i*10+Math.min(3,p.bet+1))+'"'+(p.bet>=3?" disabled":"")+'>+</button></span>'+(!me.local?'<button class="bj-ready'+(p.ready?" on":"")+'" data-act="ready">'+(p.ready?_t("✅ Listo"):_t("Listo"))+'</button>':"");
+        else bet='<span class="bj-bet"><b>'+(window.__na?'🔘 ':'🥃 ')+p.bet+'</b>'+(p.ready?' ✅':' ⏳')+'</span>';
+      } else bet='<span class="bj-bet"><b>'+(window.__na?'🔘 ':'🥃 ')+p.bet+'</b></span>';
       return '<div class="bj-p'+(on?" on":"")+(mine&&!me.local?" mine":"")+'">'+av(p,"xs")+'<div class="bj-pi"><span class="bj-n">'+esc(p.name)+(p.cards.length?' · <b>'+p.val+'</b>':'')+'</span><div class="bj-cards sm">'+p.cards.map(c=>fr(c,"sm")).join("")+'</div></div><div class="bj-side">'+bet+st+(p.drink?'<small>'+esc(p.drink)+'</small>':'')+'</div></div>';
     }).join("")+'</div>';
-    if(pub.stage==="bet")h+='<div class="ut-turn">'+(me.local?_t("🥃 Cada uno elige cuántos tragos apuesta (1 a 3)"):_t("🥃 Elige cuántos tragos apuestas y pulsa «Listo»"))+'</div>';
+    if(pub.stage==="bet")h+='<div class="ut-turn">'+(window.__na?(me.local?_t("🔘 Cada uno elige cuántas fichas apuesta (1 a 3)"):_t("🔘 Elige cuántas fichas apuestas y pulsa «Listo»")):me.local?_t("🥃 Cada uno elige cuántos tragos apuesta (1 a 3)"):_t("🥃 Elige cuántos tragos apuestas y pulsa «Listo»"))+'</div>';
     if(pub.stage==="bet"&&(me.local||me.isHost))h+='<div class="uno-btns"><button class="btn primary" data-act="deal"'+(me.local||pub.allReady?"":" disabled")+(_t('>🃏 Repartir')+'</button>'+'</div>');
     if(myTurn&&!me.hidden){
       const p=cur;
@@ -142,7 +142,7 @@ window.Cartas=(function(){
   function pkView(pub,me,ui){
     const P=pub.players,mi=Math.max(0,P.findIndex(p=>p.name===me.name)),cur=P[pub.turn],myTurn=pub.stage==="play"&&cur&&cur.name===me.name;
     let h='<div class="ut rt cg pk'+(myTurn?" my":"")+'"><div class="ut-table rt-table pk-table">';
-    h+=seats(P,mi,pub.turn,pub.stage!=="play",p=>(p.tags?'<span class="pk-tag">'+p.tags+'</span>':'')+(p.folded?('<span class="ut-cnt">'+_t('Fuera')+'</span>'):'<span class="ut-cnt pk-chip">🥃 '+p.tot+'</span>')+(p.show?'<span class="pk-show">'+p.show.map(c=>fr(c,"xs")).join("")+'</span>':''));
+    h+=seats(P,mi,pub.turn,pub.stage!=="play",p=>(p.tags?'<span class="pk-tag">'+p.tags+'</span>':'')+(p.folded?('<span class="ut-cnt">'+_t('Fuera')+'</span>'):'<span class="ut-cnt pk-chip">'+(window.__na?'🔘 ':'🥃 ')+p.tot+'</span>')+(p.show?'<span class="pk-show">'+p.show.map(c=>fr(c,"xs")).join("")+'</span>':''));
     const B=pub.board||[];
     h+='<div class="ut-center pk-center"><div class="pk-board">'+[0,1,2,3,4].map(i=>B[i]?fr(B[i],"md"):'<span class="rc ghost md"></span>').join("")+('</div>'+'<small class="pk-pot">'+_t('Bote: '))+pub.pot+(pub.pot===1?_t(" trago"):_t(" tragos"))+' · '+[_t("Antes del flop"),_t("Flop"),_t("Turn"),_t("River"),_t("Enseñar")][pub.street]+'</small></div>';
     h+='<div class="ut-log">'+esc(pub.log||"")+'</div></div>';
@@ -150,7 +150,7 @@ window.Cartas=(function(){
       h+='<div class="ut-end"><b>'+esc(pub.winT||"")+'</b>'+(pub.rows||[]).map(r=>'<div style="border-left:5px solid '+r.c+'"><span>'+esc(r.n)+' · '+esc(r.val)+'</span><span>'+esc(r.drink)+'</span></div>').join("")+(me.isHost?'':('<small>'+_t('⏳ Esperando a que el anfitrión reparta otra mano')+'</small>'))+'</div>'+
         (me.isHost?('<div class="uno-btns">'+'<button class="btn primary" data-act="next">'+_t('🃏 Siguiente mano')+'</button>'+'</div>'):'');
     } else if(myTurn&&!me.hidden){
-      h+='<div class="ut-turn go">🎯 '+(me.toCall?_t("Te toca: ")+me.toCall+(me.toCall>1?_t(" tragos"):_t(" trago"))+_t(" para seguir"):_t("Te toca: puedes pasar"))+'</div>';
+      h+='<div class="ut-turn go">🎯 '+(me.toCall?_t("Te toca: ")+me.toCall+(window.__na?(me.toCall>1?_t(" fichas"):_t(" ficha")):me.toCall>1?_t(" tragos"):_t(" trago"))+_t(" para seguir"):_t("Te toca: puedes pasar"))+'</div>';
     } else if(!myTurn&&cur)h+=('<div class="ut-turn">'+_t('⏳ Le toca a ')+'<b>')+esc(cur.name)+'</b></div>';
     const me0=P[mi];
     if(pub.stage!=="play"&&me.local){}

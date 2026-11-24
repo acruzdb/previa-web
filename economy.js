@@ -10,7 +10,12 @@
     AD_COINS:20,AD_DAY:3,       // vídeos con recompensa: los únicos anuncios de la app
     STREAK:[10,15,20,25,30,40,60], // premio diario según el día de la racha (ciclo de 7)
     LV_GAMES:5,LV_COINS:25,LV_MONTH:4, // nivel cada 5 partidas; 25 monedas por nivel, como mucho 4 niveles pagados al mes
-    RUN_STEP:1000,RUN_COINS:5,RUN_MAX:10000 // dino corredor: 5 monedas cada 1000 m, hasta 10000 m (50) al día
+    // dino corredor: solo se paga la PRIMERA vez que se llega a cada marca de 1000 m (para siempre),
+    // y cada marca paga un poco más que la anterior: 1000 m = 2, 2000 m = 3 … 10000 m = 11 (65 en total)
+    RUN_STEP:1000,RUN_BASE:1,RUN_MAX:10000,
+    // Invasión (tema Gamer): cada nivel superado por primera vez da 2 puntos de experiencia de Gamer;
+    // las monedas llegan al subir de nivel de Gamer (25 por nivel, máximo 4 niveles pagados al mes)
+    SI_XP:2
   };
   // Profesiones es gratis; el resto de avatares va por packs
   const FREE_AV=["bombero","bombero_m","policia","policia_m","chef","chef_m","profesor","cientifica","doctora","astronauta","detective"];
@@ -147,16 +152,23 @@ const allIn=W=>!!W.vip||!!W.pro;
     return {levels:ups,coins,capped:pay<ups};
   }
   // ---- minijuego del dino: monedas por distancia, una vez por tramo y día ----
-  function runReward(W,meters,today){
+  // monedas de una marca del dino (k = 1 para 1000 m, 2 para 2000 m…)
+  const runMark=k=>CFG.RUN_BASE+k;
+  function runReward(W,meters){
     const m=Math.max(0,Math.min(CFG.RUN_MAX,meters|0)),steps=Math.floor(m/CFG.RUN_STEP);
-    if(W.runDay!==today){W.runDay=today;W.runPaid=0}
+    // quien ya cobraba con el sistema anterior (por día) no vuelve a cobrar las marcas que ya pasó
+    if(W.runMs==null)W.runMs=Math.floor(Math.min(CFG.RUN_MAX,W.runBest|0)/CFG.RUN_STEP);
     if((meters|0)>(W.runBest|0))W.runBest=meters|0;
-    const add=Math.max(0,steps-(W.runPaid|0));W.runPaid=Math.max(W.runPaid|0,steps);
-    const coins=add*CFG.RUN_COINS;W.coins+=coins;return coins;
+    let coins=0;for(let k=(W.runMs|0)+1;k<=steps;k++)coins+=runMark(k);
+    W.runMs=Math.max(W.runMs|0,steps);W.coins+=coins;return coins;
   }
+  // lo que queda por ganar en el dino y la siguiente marca
+  function runNext(W){const k=(W.runMs|0)+1;return k>CFG.RUN_MAX/CFG.RUN_STEP?null:{m:k*CFG.RUN_STEP,coins:runMark(k)}}
+  // experiencia de Gamer: partidas jugadas + 2 por cada nivel de Invasión superado
+  function gamerXP(played,siBest){return (played|0)+CFG.SI_XP*(siBest|0)}
   function themeItem(key){return ITEMS.find(it=>it.kind==="theme"&&it.key===key)||null}
   function themeLocked(W,key){const it=themeItem(key);return !!it&&!owns(W,it.id)}
-  const E={allIn,unredeem,level,claimLevels,runReward,themeItem,themeLocked,sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem,catItem,catLocked};
+  const E={allIn,unredeem,level,claimLevels,runReward,runNext,gamerXP,themeItem,themeLocked,sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem,catItem,catLocked};
   if(typeof module!=="undefined"&&module.exports)module.exports=E;
   root.Economy=E;
 })(typeof window!=="undefined"?window:globalThis);

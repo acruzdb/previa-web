@@ -26,7 +26,7 @@ window.Pueblo=(function(){
     let h='<div class="pv">';
     h+='<div class="pv-phase '+st.phase+'">'+(st.phase==="end"?_t("🏁 Fin de la partida"):st.phase==="night"?_t("🌙 Noche ")+st.n:_t("☀️ Día ")+st.n)+('<small>'+_t('Narra '))+esc(st.narrator)+'</small></div>';
     if(st.phase==="end"){
-      h+='<div class="pv-win '+st.winner+'"><div class="em">'+(st.winner==="pueblo"?"🎉":"🔪")+'</div><b>'+(st.winner==="pueblo"?_t("¡Gana el pueblo!"):_t("¡Ganan los asesinos!"))+'</b><span>'+(st.winner==="pueblo"?_t("Los asesinos beben 3 tragos cada uno."):_t("Todo el pueblo bebe 2 tragos."))+'</span></div>';
+      h+='<div class="pv-win '+st.winner+'"><div class="em">'+(st.winner==="pueblo"?"🎉":"🔪")+'</div><b>'+(st.winner==="pueblo"?_t("¡Gana el pueblo!"):_t("¡Ganan los asesinos!"))+'</b><span>'+(window.__na?"":st.winner==="pueblo"?_t("Los asesinos beben 3 tragos cada uno."):_t("Todo el pueblo bebe 2 tragos."))+'</span></div>';
     }
     if(!me.isNarr&&me.role){
       const r=ROLES[me.role];
