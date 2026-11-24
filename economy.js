@@ -8,7 +8,9 @@
   const CFG={
     START:50,          // monedas al instalar
     AD_COINS:20,AD_DAY:3,       // vídeos con recompensa: los únicos anuncios de la app
-    STREAK:[10,15,20,25,30,40,60] // premio diario según el día de la racha (ciclo de 7)
+    STREAK:[10,15,20,25,30,40,60], // premio diario según el día de la racha (ciclo de 7)
+    LV_GAMES:5,LV_COINS:25,LV_MONTH:4, // nivel cada 5 partidas; 25 monedas por nivel, como mucho 4 niveles pagados al mes
+    RUN_STEP:1000,RUN_COINS:5,RUN_MAX:10000 // dino corredor: 5 monedas cada 1000 m, hasta 10000 m (50) al día
   };
   // Profesiones es gratis; el resto de avatares va por packs
   const FREE_AV=["bombero","bombero_m","policia","policia_m","chef","chef_m","profesor","cientifica","doctora","astronauta","detective"];
@@ -37,6 +39,7 @@
     {id:"cp_botella",kind:"cards",go:"bottle-setup",price:120,decks:[["BOTELLA","verdad",40],["BOTELLA","reto",40]]},
     // temas de la app (el clásico oscuro/claro es gratis)
     {id:"th_periodico",kind:"theme",key:"periodico",go:"settings",price:150},
+    {id:"th_comic",kind:"theme",key:"comic",go:"settings",price:150},
     {id:"th_arcade",kind:"theme",key:"arcade",go:"settings",price:150}
   ];
   const item=id=>ITEMS.find(i=>i.id===id)||null;
@@ -62,6 +65,8 @@
   const vipNorm=c=>String(c||"").toUpperCase().normalize("NFD").replace(/[^A-Z0-9]/g,"");
   const isVipCode=c=>sha256(vipNorm(c))===VIP_HASH;
   function redeem(W,code){if(!isVipCode(code))return false;W.vip=true;return true}
+  // quitar el código en este móvil (para probar la tienda como cualquiera)
+  function unredeem(W){const was=!!W.vip;W.vip=false;return was}
 
   // ---- fechas (clave local AAAA-MM-DD) ----
   const pad=n=>(n<10?"0":"")+n;
@@ -81,7 +86,9 @@
     return W;
   }
   function roll(W,today){if(W.day!==today){W.day=today;W.ads=0;W.plays=0}return W}
-  const owns=(W,id)=>!!W.vip||!!W.owned[id];
+  // VIP (código) y Pro (pago único en Play Store) lo desbloquean todo
+const owns=(W,id)=>!!W.vip||!!W.pro||!!W.owned[id];
+const allIn=W=>!!W.vip||!!W.pro;
 
   // ---- racha diaria ----
   // devuelve {claimable, run (días seguidos contando hoy si se recoge), idx (0-6 del premio de hoy), reward}
@@ -99,7 +106,7 @@
   }
 
   // ---- ganar monedas ----
-  const adsLeft=W=>W.vip?0:Math.max(0,CFG.AD_DAY-W.ads);
+  const adsLeft=W=>allIn(W)?0:Math.max(0,CFG.AD_DAY-W.ads);
   function rewardAd(W){if(adsLeft(W)<=0)return 0;W.ads++;W.coins+=CFG.AD_COINS;return CFG.AD_COINS}
 
   // ---- compras ----
@@ -114,7 +121,7 @@
   // ---- qué está bloqueado ----
   const AV_ITEM={};ITEMS.forEach(i=>{if(i.kind==="avatars")i.ids.forEach(a=>{AV_ITEM[a]=i.id})});
   // un avatar que no es de Profesiones y cuyo pack no tienes
-  function avLocked(W,id){if(W.vip||FREE_AV.indexOf(id)>=0)return false;const it=AV_ITEM[id];return it?!owns(W,it):true}
+  function avLocked(W,id){if(allIn(W)||FREE_AV.indexOf(id)>=0)return false;const it=AV_ITEM[id];return it?!owns(W,it):true}
   function avItem(id){return AV_ITEM[id]?item(AV_ITEM[id]):null}
   // cartas que se pueden usar de un mazo: Infinity si no está limitado o tienes el pack
   function deckLimit(W,obj,key){
@@ -127,9 +134,29 @@
   function catLocked(W,game,key){const it=catItem(game,key);return !!it&&!owns(W,it.id)}
   function deckItem(obj,key){return ITEMS.find(it=>it.kind==="cards"&&it.decks.some(d=>d[0]===obj&&d[1]===key))||null}
 
+  // ---- niveles: cada LV_GAMES partidas sube uno; las subidas dan monedas, con tope al mes ----
+  const monthKey=today=>String(today||"").slice(0,7);
+  function level(played){const n=Math.max(0,played|0);return {lv:1+Math.floor(n/CFG.LV_GAMES),xp:(n%CFG.LV_GAMES)/CFG.LV_GAMES,left:CFG.LV_GAMES-(n%CFG.LV_GAMES)}}
+  // paga las subidas de nivel pendientes. Devuelve {levels, coins, capped}
+  function claimLevels(W,played,today){
+    const lv=level(played).lv;if(W.lvPaid==null){W.lvPaid=lv;return {levels:0,coins:0,capped:false}} // al estrenarlo no se paga el pasado
+    if(lv<=W.lvPaid)return {levels:0,coins:0,capped:false};
+    const m=monthKey(today);if(W.lvMonth!==m){W.lvMonth=m;W.lvCount=0}
+    const ups=lv-W.lvPaid,pay=Math.max(0,Math.min(ups,CFG.LV_MONTH-(W.lvCount|0)));
+    W.lvPaid=lv;W.lvCount=(W.lvCount|0)+pay;const coins=pay*CFG.LV_COINS;W.coins+=coins;
+    return {levels:ups,coins,capped:pay<ups};
+  }
+  // ---- minijuego del dino: monedas por distancia, una vez por tramo y día ----
+  function runReward(W,meters,today){
+    const m=Math.max(0,Math.min(CFG.RUN_MAX,meters|0)),steps=Math.floor(m/CFG.RUN_STEP);
+    if(W.runDay!==today){W.runDay=today;W.runPaid=0}
+    if((meters|0)>(W.runBest|0))W.runBest=meters|0;
+    const add=Math.max(0,steps-(W.runPaid|0));W.runPaid=Math.max(W.runPaid|0,steps);
+    const coins=add*CFG.RUN_COINS;W.coins+=coins;return coins;
+  }
   function themeItem(key){return ITEMS.find(it=>it.kind==="theme"&&it.key===key)||null}
   function themeLocked(W,key){const it=themeItem(key);return !!it&&!owns(W,it.id)}
-  const E={themeItem,themeLocked,sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem,catItem,catLocked};
+  const E={allIn,unredeem,level,claimLevels,runReward,themeItem,themeLocked,sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem,catItem,catLocked};
   if(typeof module!=="undefined"&&module.exports)module.exports=E;
   root.Economy=E;
 })(typeof window!=="undefined"?window:globalThis);

@@ -1752,3 +1752,46 @@ body.store .st-only{display:block}
 .sn-w.w2{animation-delay:.8s}.sn-w.w3{animation-delay:1.6s}
 @keyframes sn-w{0%{opacity:.9;transform:translate(-50%,-50%) scale(.6)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.7)}}
 [data-skin="periodico"] .sn-w{border-color:rgba(22,20,18,.7)}
+
+/* =====================================================================
+   v5.9 · la ficha de monedas / VIP alineada con los iconos en todas las cabeceras
+   ===================================================================== */
+body.store .coinchip.st-only{display:inline-flex}
+.topbar .coinchip{flex:0 0 auto;white-space:nowrap;height:44px;align-self:center}
+.topbtns .coinchip{height:44px}
+.coinchip.vip{padding:0 12px;gap:4px}
+.coinchip.vip b{letter-spacing:.5px}
+.topbar .logo{min-width:0;flex:0 1 auto}
+.topbar #sect-title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* en los temas, la ficha mide lo mismo que sus iconos */
+[data-skin="periodico"] .topbar .coinchip,[data-skin="periodico"] .topbtns .coinchip,[data-skin="comic"] .topbar .coinchip{height:36px;padding:0 10px}
+[data-skin="periodico"] .topbtns,[data-skin="comic"] .topbtns{gap:6px;align-items:center}
+[data-skin="dinos"] .topbar .coinchip,[data-skin="dinos"] .topbtns .coinchip{height:44px;border-radius:22px;padding:0 12px;box-shadow:0 3px 0 rgba(0,0,0,.35)}
+[data-skin="dinos"] .topbtns{gap:6px;align-items:center}
+[data-skin="dinos"] .topbtns .icon{width:44px;height:44px;font-size:20px;border-radius:50%}
+[data-skin="dinos"] #s-home .topbar .logo{font-size:34px}
+[data-skin="arcade"] .topbar .coinchip,[data-skin="arcade"] .topbtns .coinchip{height:44px}
+
+/* ===== Previa Pro (pago único) ===== */
+.pro-box{margin:0 0 14px}
+.pro-card{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:18px;background:linear-gradient(135deg,rgba(255,210,63,.22),rgba(255,46,136,.16));border:1.5px solid rgba(255,210,63,.55)}
+.pro-t b{display:block;font-size:20px;font-weight:900;color:#ffd23f}
+.pro-t span,.pro-card.on span{font-size:13.5px;line-height:1.35;opacity:.9}
+.pro-card.on b{font-size:17px;color:#ffd23f}
+.pro-card .btn{width:100%}
+.pro-restore{background:none;border:0;color:inherit;opacity:.75;font-size:13px;text-decoration:underline;text-underline-offset:3px;padding:2px}
+.panel .pro-box{margin:0}
+[data-theme="light"] .pro-t b,[data-theme="light"] .pro-card.on b{color:#b7791f}
+[data-skin="periodico"] .pro-card{background:transparent;border:2px solid var(--ink);border-radius:0}
+[data-skin="periodico"] .pro-t b,[data-skin="periodico"] .pro-card.on b{font-family:"Playfair";color:var(--red)}
+[data-skin="arcade"] .pro-card{border-radius:0;clip-path:var(--cut);background:linear-gradient(120deg,rgba(198,255,0,.15),rgba(255,255,255,.03));border:0;box-shadow:var(--hl)}
+[data-skin="arcade"] .pro-t b,[data-skin="arcade"] .pro-card.on b{font-family:"Chakra";color:#c6ff00;text-transform:uppercase}
+[data-skin="dinos"] .pro-card{background:#fff3d6;border:3px solid #2b1d12;box-shadow:0 5px 0 #2b1d12}
+[data-skin="dinos"] .pro-t b,[data-skin="dinos"] .pro-card.on b{font-family:"Lilita";color:#e85d04}
+/* miniatura del tema Cómic */
+.thm-comic{background:radial-gradient(rgba(232,32,42,.25) 1px,transparent 1.4px) 0 0/5px 5px,#fffaf0;padding:6px;gap:4px}
+.thm-comic i{border:1.5px solid #14110f;border-radius:2px;box-shadow:1.5px 1.5px 0 #14110f}
+.thm-comic i:nth-child(1){background:#ffd60a;transform:rotate(-3deg)}
+.thm-comic i:nth-child(2){background:#29b6f6}
+.thm-comic i:nth-child(3){background:#ff4fa3}
+.thm-comic i:nth-child(4){background:#3ecf6e}
