@@ -1,0 +1,64 @@
+/* =====================================================================
+   EL IMPOSTOR · estilo «Lejano Oeste» (va así con cualquier tema)
+   Tablones de saloon, carteles de SE BUSCA y letra Rye.
+   El impostor es «el forajido»; la palabra, un telegrama del sheriff.
+   Vale para la pantalla del juego, su configuración y la vista online (.io,
+   también en la página de invitados).  Fuente Rye: SIL OFL (fonts/OFL-rye.txt).
+   ===================================================================== */
+@font-face{font-family:"Rye";src:url(fonts/Rye.ttf) format("truetype");font-display:swap}
+:root{--w-wood:#6f4224;--w-ink:#2a160a;--w-paper:#f1e0bb;--w-gold:#e9c46a;--w-red:#9b1c14;--w-cream:#f4dfb6}
+
+/* fondo de tablones */
+#s-imp-setup,#s-imp{color:var(--w-cream)!important;background:
+  repeating-linear-gradient(90deg,rgba(0,0,0,.28) 0 2px,transparent 2px 64px),
+  repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 7px),
+  linear-gradient(90deg,#6b3f22,#8a5530 25%,#6f4224 50%,#8d5a33 75%,#6b3f22)!important;background-attachment:local!important}
+#s-imp-setup .topbar h1,#s-imp .topbar h1{font-family:"Rye",serif!important;font-weight:400!important;font-size:24px!important;color:var(--w-gold)!important;text-shadow:2px 2px 0 #000!important;letter-spacing:.5px!important;text-transform:none!important}
+#s-imp-setup .icon,#s-imp .icon{background:var(--w-ink)!important;color:var(--w-gold)!important;border:2px solid #c08a4a!important;border-radius:6px!important;box-shadow:0 3px 0 #1a0e06!important;clip-path:none!important}
+#s-imp .round{font-family:"Rye",serif;color:var(--w-gold);background:var(--w-ink);border:2px solid #c08a4a;border-radius:6px;padding:3px 10px}
+
+/* paneles: papel clavado en la madera */
+#s-imp-setup .panel{position:relative;background:var(--w-paper)!important;color:var(--w-ink)!important;border:0!important;border-radius:0!important;clip-path:polygon(1% 0,99% 1%,100% 98%,98% 100%,2% 99%,0 2%)!important;
+  box-shadow:none!important;padding:16px 16px 14px!important}
+#s-imp-setup .panel::before{content:"";position:absolute;top:6px;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#555;box-shadow:0 1px 0 #000}
+#s-imp-setup .panel h3{font-family:"Rye",serif!important;font-weight:400!important;font-size:16px!important;letter-spacing:.5px!important;text-transform:none!important;color:var(--w-ink)!important;text-shadow:none!important}
+#s-imp-setup .panel .hint,#s-imp-setup .panel small,#s-imp-setup .row span{color:#5a3a1e!important}
+#s-imp-setup .seg button,#s-imp-setup .chips button{background:#e6cfa1!important;color:var(--w-ink)!important;border:2px solid var(--w-ink)!important;border-radius:6px!important;box-shadow:0 3px 0 rgba(42,22,10,.5)!important;clip-path:none!important;font-family:inherit!important}
+#s-imp-setup .seg button small{color:#6b4a2a!important}
+#s-imp-setup .seg button.on,#s-imp-setup .chips button.on{background:var(--w-ink)!important;color:var(--w-gold)!important}
+#s-imp-setup .seg button.on small{color:#d9c08a!important}
+#s-imp-setup .chips button.lk,#s-imp-setup .chips button[data-lk]{opacity:.6}
+#s-imp-setup .btn.primary,#s-imp .btn.primary,.io .btn.primary{font-family:"Rye",serif!important;font-weight:400!important;letter-spacing:.5px!important;text-transform:none!important;
+  background:linear-gradient(180deg,#f1c96a,#c9952e)!important;color:var(--w-ink)!important;border:2px solid var(--w-ink)!important;border-radius:8px!important;box-shadow:0 4px 0 var(--w-ink)!important;clip-path:none!important}
+#s-imp .btn:not(.primary),#s-imp-setup .btn.ghost{font-family:"Rye",serif!important;font-weight:400!important;text-transform:none!important;background:var(--w-ink)!important;color:var(--w-cream)!important;border:2px solid #c08a4a!important;border-radius:8px!important;box-shadow:0 4px 0 #1a0e06!important;clip-path:none!important}
+#s-imp-setup input[type=checkbox]{accent-color:#7a4a1e}
+
+/* las cartas: carteles de SE BUSCA */
+#s-imp .card.imp,.io .io-card{background:var(--w-paper)!important;color:var(--w-ink)!important;border:0!important;border-radius:0!important;
+  clip-path:polygon(2% 0,98% 1%,100% 97%,96% 100%,3% 99%,0 3%)!important;box-shadow:inset 0 0 0 6px var(--w-paper),inset 0 0 0 8px var(--w-ink),inset 0 0 60px rgba(120,70,20,.35)!important;
+}
+#s-imp .card.imp::before,.io .io-card::before{content:"SE BUSCA";display:block;position:static;width:100%;text-align:center;font-family:"Rye",serif;font-size:30px;letter-spacing:2px;color:var(--w-ink)}
+#s-imp .card.imp .imp-tag,.io .io-tag{font-family:"Rye",serif;font-weight:400;opacity:1;color:#5a3a1e}
+#s-imp .card.imp .bigword,.io .io-big{font-family:"Rye",serif!important;font-weight:400!important;color:var(--w-ink)!important;text-shadow:none!important;letter-spacing:.5px}
+#s-imp .card.imp .cfoot,.io .io-foot{color:#4a2e14!important;opacity:1!important}
+#s-imp .card.imp .cfoot b,.io .io-foot b{color:var(--w-red)}
+#s-imp .card.imp .pn{background:var(--w-ink)!important;color:var(--w-gold)!important}
+#s-imp .card.imp img.av,#s-imp .card.imp .av,.io .io-card .av{border-radius:0!important;border:3px solid var(--w-ink)!important;filter:sepia(.55) contrast(1.05);background:#e6cfa1}
+#s-imp .tapme{filter:sepia(.6)}
+/* la palabra: telegrama del sheriff */
+#s-imp .card.imp.backf:not(.isimp)::before,.io .io-card.word::before{content:"TELEGRAMA";font-size:24px;letter-spacing:4px}
+/* el impostor: el forajido, con sello rojo */
+#s-imp .card.imp.backf.isimp::before,.io .io-card.imp::before{content:"¡FORAJIDO!";color:var(--w-red)}
+#s-imp .card.imp.backf.isimp,.io .io-card.imp{background:#efd3a5!important}
+#s-imp .card.imp.backf.isimp .bigword,.io .io-card.imp .io-big{color:var(--w-red)!important;border:3px solid var(--w-red);padding:4px 12px;transform:rotate(-4deg)}
+/* empieza: el duelo; final: la recompensa */
+#s-imp[data-ph="play"] #impcard::before,.io .io-card.go::before{content:"DUELO AL AMANECER";font-size:20px;letter-spacing:1px}
+#s-imp[data-ph="end"] #impcard::before,.io .io-card.end::before{content:"RECOMPENSA";color:var(--w-red)}
+#s-imp[data-ph="end"] #impcard,.io .io-card.end{background:#efd3a5!important}
+#s-imp .imp-list>div,.io .io-list>div{font-family:"Rye",serif;font-weight:400;color:var(--w-ink)}
+/* vista online: asientos y avisos */
+.io .io-wait,.io .io-mine{background:var(--w-ink)!important;color:var(--w-gold)!important;font-family:"Rye",serif;font-weight:400;border-radius:6px}
+.io .io-seats span{background:var(--w-paper)!important;color:var(--w-ink)!important;border-radius:4px}
+.io .io-seats .av{border-radius:0}
+/* en la página de invitados también va sobre madera */
+body:has(.io){background:linear-gradient(90deg,#6b3f22,#8a5530 25%,#6f4224 50%,#8d5a33 75%,#6b3f22)}
