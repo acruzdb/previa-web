@@ -1630,7 +1630,7 @@ body.store .st-only{display:block}
 .thm-arcade i:nth-child(3){background:linear-gradient(160deg,#0ea5e9,#6366f1)}
 .thm-arcade i:nth-child(4){background:linear-gradient(160deg,#f97316,#e11d48)}
 .seg.muted button.on{background:transparent!important;border-color:var(--line)!important;box-shadow:none!important;color:inherit!important}
-.seg.muted{opacity:.6}
+.seg.muted{opacity:.78}
 #th-note{margin:10px 0 0}
 /* vista previa del tema: un móvil con el vídeo */
 .mcard.thprev #m-text{display:flex;justify-content:center}
@@ -1913,3 +1913,49 @@ html.noalc .spl-mugs{visibility:hidden}
 [data-skin="periodico"] .quickgo,[data-skin="comic"] .quickgo{border-radius:4px;border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);background:var(--red,#b3121b)}
 [data-skin="arcade"] .quickgo{border-radius:0;clip-path:var(--cut);background:#c6ff00;color:#0b0d10;box-shadow:none}
 [data-skin="dinos"] .quickgo{border:3px solid #2b1d12;border-radius:18px;box-shadow:0 4px 0 #2b1d12;background:#5fb341}
+
+/* =====================================================================
+   REVISIÓN DE CONTRASTE (v6.3): medido texto/fondo en 6 temas y 10 pantallas.
+   Lo que bajaba de lo recomendable (4,5:1 en texto normal y 3:1 en grande)
+   se oscurece, se le da sombra o se cambia de color.
+   ===================================================================== */
+/* tarjetas de juego de colores vivos: una capa oscura muy suave y sombra al texto */
+.mode{box-shadow:inset 0 0 0 999px rgba(0,0,0,.14)}
+.mode h2,.mode p{text-shadow:0 1px 2px rgba(0,0,0,.45),0 0 12px rgba(0,0,0,.18)}
+.mode p{opacity:1!important;color:#fff!important}
+:root[data-theme="light"]:not([data-skin]) .mode.locked h2,:root[data-theme="light"]:not([data-skin]) .mode.premium h2{text-shadow:none}
+/* «Sorpréndeme» */
+html:not([data-skin]) .qbtn.surprise small{color:#fff!important;opacity:1}
+html:not([data-skin]) .qbtn.surprise b,html:not([data-skin]) .qbtn.surprise small{text-shadow:0 1px 2px rgba(0,0,0,.35)}
+/* secciones de la tienda: el ámbar era demasiado claro para letra blanca */
+.sh-grp b,.sh-grp small{text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.sh-grp[data-grp="cats"]{background:linear-gradient(160deg,#f59e0b,#d97706 55%,#92400e)!important}
+/* precios que aún no puedes pagar: más legibles */
+.sh-pbtn.dis{color:#bdb6d8}
+/* opciones con candado: algo menos apagadas */
+.seg button.cplock{opacity:.72}
+/* «Empezar rápido» */
+.quickgo b,.quickgo small{text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.quickgo small{opacity:1}
+/* «🎮 JUEGO NUEVO» y similares sobre rojo */
+.sh-hero .k{color:#fff!important;opacity:1!important}
+/* en temas claros, las monedas amarillas sobre blanco no se leían */
+:root[data-theme="light"]:not([data-skin]) .coinchip b,:root[data-theme="light"]:not([data-skin]) .sh-ec .amt{color:#b45309}
+[data-skin="periodico"] .coinchip b,[data-skin="comic"] .coinchip b{color:var(--ink)}
+:root[data-theme="light"]:not([data-skin]) .pro-t b,:root[data-theme="light"]:not([data-skin]) .pro-card.on b{color:#92400e}
+/* tema en uso */
+:root[data-theme="light"]:not([data-skin]) .thtile.on small{color:#b0105a}
+/* Gamer: nombres de los jugadores sobre su color (texto oscuro, como en el resto) */
+[data-skin="arcade"] .lp:not(.add) span{color:#0b0d10!important;font-weight:700}
+[data-skin="arcade"] .gm-hero{box-shadow:inset 0 0 0 999px rgba(0,0,0,.18)}
+[data-skin="arcade"] .gm-hero .gm-k,[data-skin="arcade"] .gm-hero em,[data-skin="arcade"] .gm-hero b,[data-skin="arcade"] .gm-tile b{text-shadow:0 1px 2px rgba(0,0,0,.6),0 0 14px rgba(0,0,0,.35)}
+[data-skin="arcade"] .gm-hero .gm-k{color:#fff;opacity:1}
+[data-skin="arcade"] .gm-hero em{color:#fff;opacity:1}
+[data-skin="arcade"] .lobby-h span,[data-skin="arcade"] .qbtn small{color:#b8bfcc}
+/* Periódico y Cómic */
+[data-skin="periodico"] .sh-ec .amt,[data-skin="comic"] .sh-ec .amt{color:var(--ink)}
+[data-skin="periodico"] .seg.muted button,[data-skin="dinos"] .seg.muted button{color:var(--ink,#2b1d12);opacity:1}
+[data-skin="arcade"] .sh-pbtn.dis{color:#a3abbd!important}
+:root[data-theme="light"]:not([data-skin]) .coinchip b{color:#92400e}
+:root[data-theme="light"]:not([data-skin]) .seg button.on small{color:#4a4360}
+[data-skin="arcade"] .gm-tile b{text-shadow:0 1px 3px rgba(0,0,0,.75)}
