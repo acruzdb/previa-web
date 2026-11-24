@@ -50,7 +50,7 @@ if(INAPP){const p0=(ls.get("previa_players",[])||[])[0];if(p0&&!ls.get("previa_n
 function joinForm(){
   const body=$("#r-body");view="join";
   const AVL=myAvatars();if(!AVL.some(a=>a.id===myAv))myAv=AVL[0].id;
-  body.innerHTML=('<div class="panel r-join">'+'<h3>'+_t('🧠 Trivial en grupo')+'</h3>'+'<p class="hint">'+_t('Escribe tu nombre y elige avatar para unirte a la partida.')+'</p>')+
+  body.innerHTML=('<div class="panel r-join">'+'<h3>'+_t('🧠 Pregúntame en grupo')+'</h3>'+'<p class="hint">'+_t('Escribe tu nombre y elige avatar para unirte a la partida.')+'</p>')+
     '<input id="r-name" maxlength="14" placeholder="Tu nombre" value="'+esc(ls.get("previa_net_name",""))+'">'+
     '<div class="r-avs">'+AVL.map(a=>'<button data-id="'+a.id+'" class="'+(a.id===myAv?"on":"")+'"><img alt="" src="'+avatarURL(a.id)+'"></button>').join("")+'</div>'+
     ('<button class="btn primary" id="r-go">'+_t('Entrar en la partida')+'</button>'+'</div>');
@@ -58,7 +58,7 @@ function joinForm(){
   $("#r-go").onclick=()=>{const n=$("#r-name").value.trim();if(!n){$("#r-name").focus();return}
     ls.set("previa_net_name",n);ls.set("previa_net_av",myAv);joining=true;$("#r-go").textContent=_t("Uniéndote…");send({t:"join",name:n,av:myAv,key:myKey})};
 }
-// ---------- modo espejo (Parchís y Trivial con tablero) ----------
+// ---------- modo espejo (Parchís y Pregúntame con tablero) ----------
 let mv={scr:null,mod:null,toast:"",mine:false,claimed:null},mtT=null;
 function mtoast(t){let el=document.getElementById("toast");if(!el){el=document.createElement("div");el.id="toast";el.className="toast";document.getElementById("app").appendChild(el)}el.textContent=t;el.hidden=false;clearTimeout(mtT);mtT=setTimeout(()=>el.hidden=true,2200)}
 function fixAv(root){root.querySelectorAll("[data-av-src]").forEach(e=>e.setAttribute("src",avatarURL(e.getAttribute("data-av-src"))));root.querySelectorAll("[data-av-href]").forEach(e=>e.setAttribute("href",avatarURL(e.getAttribute("data-av-href"))))}

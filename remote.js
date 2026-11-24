@@ -1,4 +1,4 @@
-// Trivial en red: dibuja el estado de la partida. Lo usan el anfitrión (dentro de la app)
+// Pregúntame en red: dibuja el estado de la partida. Lo usan el anfitrión (dentro de la app)
 // y los invitados (en el navegador de su móvil, desde el enlace o el QR).
 window.NetTriv=(function(){
   const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));

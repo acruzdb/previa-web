@@ -30,7 +30,7 @@
     {id:"pc",kind:"game",go:"pc-setup",price:200},
     {id:"geo",kind:"game",go:"tg:geo",price:200},
     {id:"pueblo",kind:"game",go:"pueblo-setup",price:200},
-    // categorías sueltas: Trivial «Érase una vez», Tabú e Impostor
+    // categorías sueltas: Pregúntame «Érase una vez», Palabra prohibida e Impostor
     {id:"tr_anim",kind:"cat",game:"trivial",key:"anim",go:"tg:trivial",price:200},
     ...["lugares","profesiones","deportes","fiesta","famosos","vida","conceptos"].map(k=>({id:"tc_"+k,kind:"cat",game:"tabu",key:k,go:"tg:tabu",price:100})),
     ...["dibujos","peliculas","series","famosos","marcas","fiesta","videojuegos"].map(k=>({id:"ic_"+k,kind:"cat",game:"imp",key:k,go:"imp-setup",price:100})),

@@ -39,7 +39,7 @@ window.Ron=(function(){
     h+='<div class="ut-log">'+esc(pub.log||"")+'</div></div>';
     // estado
     if(pub.over){
-      h+=('<div class="ut-end">'+'<b>'+_t('🥃 Cabeza de ron: '))+esc(pub.loser||"")+'</b>'+(pub.rows||[]).map(r=>'<div style="border-left:5px solid '+r.c+'"><span>'+esc(r.n)+' · '+esc(r.val)+'</span><span>'+esc(r.drink)+'</span></div>').join("")+(pub.note?'<small>'+esc(pub.note)+'</small>':'')+'</div>';
+      h+=('<div class="ut-end">'+'<b>'+(window.__na?_t('🐢 El rezagado: '):_t('🥃 Cabeza de ron: ')))+esc(pub.loser||"")+'</b>'+(pub.rows||[]).map(r=>'<div style="border-left:5px solid '+r.c+'"><span>'+esc(r.n)+' · '+esc(r.val)+'</span><span>'+esc(r.drink)+'</span></div>').join("")+(pub.note?'<small>'+esc(pub.note)+'</small>':'')+'</div>';
     } else if(myTurn&&!me.hidden){
       h+='<div class="ut-turn go">'+(me.needFlip&&me.stage==="more"?_t("🔁 Destapa la siguiente: si es ")+[].concat(me.more).join(_t(" o "))+_t(", la echas. O termina el turno"):me.needFlip?_t("👇 Te has quedado sin cartas: destapa una de la mesa"):me.stage==="more"?_t("🔁 Puedes echar otro ")+[].concat(me.more).join(_t(" o un "))+_t(" o terminar"):pub.attack?"⚠️ "+(pub.attack===3?_t("Te han echado un 3"):_t("Te han echado un 1"))+_t(": responde o cómete el montón"):me.mustEat?_t("😬 No puedes echar nada: te toca comerte el montón"):_t("🎯 ¡Te toca! Elige cartas del mismo número"))+'</div>';
     } else if(!myTurn) h+=('<div class="ut-turn">'+_t('⏳ Le toca a ')+'<b>')+esc(cur.name)+'</b></div>';

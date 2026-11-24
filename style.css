@@ -1874,3 +1874,42 @@ html.noalc .spl-mugs{visibility:hidden}
 /* subtítulo de Yo nunca y similares: que se lea entero */
 .screen .topsub,.screen .subhead{white-space:normal}
 .center-turn .nm{white-space:normal;text-align:center;line-height:1.3}
+
+/* ===== Logo de la portada con adorno según el tema ===== */
+#s-home .topbar .logo{position:relative}
+/* Dinosaurios: un hueso detrás del título y una cabeza de T-rex asomando */
+[data-skin="dinos"] #s-home .topbar .logo::before{content:"";position:absolute;left:4%;bottom:-9px;width:82%;height:18px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2080%2024%22%3E%3Cpath%20d%3D%22M14%208a6%206%200%201%201%202-6%206%206%200%200%201%206%206h36a6%206%200%200%201%206-6%206%206%200%201%201%202%206%206%206%200%201%201-2%208%206%206%200%200%201-6%206%206%206%200%200%201-6-6H22a6%206%200%200%201-6%206%206%206%200%200%201-2-6%206%206%200%201%201-2-8z%22%20fill%3D%22%23fff3d6%22%20stroke%3D%22%232b1d12%22%20stroke-width%3D%222.5%22%20stroke-linejoin%3D%22round%22%20transform%3D%22translate%280%202%29%22/%3E%3C/svg%3E") center/100% 100% no-repeat;transform:rotate(-3deg);z-index:-1}
+[data-skin="dinos"] #s-home .topbar .logo::after{content:"";position:absolute;right:-10px;top:-22px;width:34px;height:26px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2048%22%3E%3Cpath%20d%3D%22M6%2030c0-14%2010-24%2026-24h10c10%200%2018%206%2018%2015%200%204-2%207-6%207H40v4l8%202-1%205-10-1v4c0%204-3%206-7%206H18C11%2048%206%2040%206%2030z%22%20fill%3D%22%235fb341%22%20stroke%3D%22%232b1d12%22%20stroke-width%3D%223%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M40%2028l2%204%202-4%202%204%202-4%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2215%22%20r%3D%224.5%22%20fill%3D%22%23fff%22%20stroke%3D%22%232b1d12%22%20stroke-width%3D%222%22/%3E%3Ccircle%20cx%3D%2247%22%20cy%3D%2215%22%20r%3D%222%22%20fill%3D%22%232b1d12%22/%3E%3Cpath%20d%3D%22M14%2014l3-7%204%206M22%209l4-7%203%207%22%20fill%3D%22%23ffb703%22%20stroke%3D%22%232b1d12%22%20stroke-width%3D%222%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2257%22%20cy%3D%2220%22%20r%3D%221.5%22%20fill%3D%22%232b1d12%22/%3E%3C/svg%3E") center/contain no-repeat;transform:rotate(12deg);animation:dn-nod 3.2s ease-in-out infinite;transform-origin:20% 90%}
+@keyframes dn-nod{0%,70%,100%{transform:rotate(12deg)}78%{transform:rotate(-4deg)}86%{transform:rotate(14deg)}}
+/* Gamer: una nave que vigila y un marciano escondido detrás de la «A» */
+[data-skin="arcade"] #s-home .topbar .logo::before{content:"";position:absolute;right:-6px;top:-13px;width:18px;height:19px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22-14%20-16%2028%2030%22%3E%3Cpath%20d%3D%22M-10%206v-8Q0-14%2010-2v8l-5-4-5%204-5-4z%22%20fill%3D%22%23ff2e88%22/%3E%3Cpath%20d%3D%22M0-8v-5%22%20stroke%3D%22%23ff2e88%22%20stroke-width%3D%222%22/%3E%3Ccircle%20cy%3D%22-14%22%20r%3D%222%22%20fill%3D%22%23ff2e88%22/%3E%3Ccircle%20cy%3D%22-1%22%20r%3D%224.2%22%20fill%3D%22%230b0d10%22/%3E%3Ccircle%20cx%3D%221%22%20cy%3D%22-1%22%20r%3D%221.8%22%20fill%3D%22%23ff2e88%22/%3E%3C/svg%3E") center/contain no-repeat;animation:gm-peek 4s ease-in-out infinite}
+[data-skin="arcade"] #s-home .topbar .logo::after{content:"";position:absolute;left:-2px;bottom:-12px;width:20px;height:17px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22-18%20-18%2036%2030%22%3E%3Cpath%20d%3D%22M0-16%205-6%2016%202v6h-32V2L-5-6z%22%20fill%3D%22%23c6ff00%22/%3E%3Cpath%20d%3D%22M0-9%203-3h-6z%22%20fill%3D%22%230b0d10%22/%3E%3Crect%20x%3D%22-12%22%20y%3D%228%22%20width%3D%225%22%20height%3D%223%22%20fill%3D%22%2300e5ff%22/%3E%3Crect%20x%3D%227%22%20y%3D%228%22%20width%3D%225%22%20height%3D%223%22%20fill%3D%22%2300e5ff%22/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 0 4px #c6ff00);animation:gm-fly 6s linear infinite}
+@keyframes gm-peek{0%,60%,100%{transform:translateY(6px);opacity:0}68%,90%{transform:translateY(0);opacity:1}}
+@keyframes gm-fly{0%{transform:translateX(0)}50%{transform:translateX(calc(100% + 80px))}100%{transform:translateX(0)}}
+@media (prefers-reduced-motion:reduce){[data-skin] #s-home .topbar .logo::before,[data-skin] #s-home .topbar .logo::after{animation:none}}
+@media (max-width:380px){[data-skin="dinos"] #s-home .topbar .logo::after{right:-8px;top:-18px;width:28px;height:21px}}
+/* ===== Mejoras de uso (v6.2) ===== */
+.quickgo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:0 0 12px;padding:12px 14px;border:0;border-radius:16px;text-align:left;cursor:pointer;color:#fff;font:inherit;
+  background:linear-gradient(120deg,var(--pri),var(--pri2));box-shadow:0 8px 20px rgba(255,46,136,.25)}
+.quickgo b{font-size:16px;font-weight:900}
+.quickgo small{font-size:12px;font-weight:700;opacity:.9}
+.quickgo:active{transform:scale(.98)}
+.quickgo[hidden]{display:none}
+.nudge{display:flex;align-items:center;gap:8px;margin:10px 0 0;padding:10px 12px;border-radius:12px;background:rgba(255,210,63,.14);border:1px solid rgba(255,210,63,.4);font-size:13px;font-weight:600;line-height:1.35}
+.nudge[hidden]{display:none}
+.nudge span{flex:1}
+.nudge .btn{flex:0 0 auto;width:auto;padding:6px 12px}
+.sh-h{display:flex;align-items:center;justify-content:space-between}
+.sh-how{font:inherit;font-size:12px;font-weight:800;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--tx);cursor:pointer;text-transform:none;letter-spacing:0}
+.hwl{display:flex;flex-direction:column;gap:10px;text-align:left}
+.hw{display:flex;gap:10px;align-items:flex-start}
+.hw>span{font-size:24px;line-height:1}
+.hw b{display:block;font-size:14.5px}
+.hw small{display:block;font-size:12.5px;opacity:.9;line-height:1.35;margin-top:2px}
+.gd-dots{display:flex;justify-content:center;gap:6px;margin-top:6px}
+.gd-dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35)}
+.gd-dots i.on{background:#fff;width:20px;border-radius:4px}
+#btn-guide{margin:8px 0}
+[data-skin="periodico"] .quickgo,[data-skin="comic"] .quickgo{border-radius:4px;border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink);background:var(--red,#b3121b)}
+[data-skin="arcade"] .quickgo{border-radius:0;clip-path:var(--cut);background:#c6ff00;color:#0b0d10;box-shadow:none}
+[data-skin="dinos"] .quickgo{border:3px solid #2b1d12;border-radius:18px;box-shadow:0 4px 0 #2b1d12;background:#5fb341}
