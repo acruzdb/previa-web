@@ -1963,3 +1963,13 @@ html:not([data-skin]) .qbtn.surprise b,html:not([data-skin]) .qbtn.surprise smal
 /* v6.5: iconos de arriba (Estadísticas, Cartas, Ajustes) centrados en todos los temas:
    sin relleno ni espaciado de letras (el Cómic usa Bangers con letter-spacing) y el emoji en una caja cuadrada */
 html #s-home .topbtns .icon{padding:0!important;letter-spacing:0!important;line-height:1!important;text-indent:0!important;text-align:center;display:grid!important;place-items:center!important;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif!important}
+/* v6.5: el invitado se añade a la sala desde el enlace */
+.mpick .mp-new{flex-direction:row;min-width:0;padding:10px 16px;font-size:14px;font-weight:700;border-style:dashed;margin-top:4px}
+.mp-form{display:flex;flex-direction:column;gap:10px;align-items:stretch;width:100%;max-width:340px;margin-top:8px;padding:14px;border-radius:16px;background:var(--bg2);border:1px solid var(--line)}
+.mp-form>b{text-align:center}
+.mp-form input{width:100%}
+.mp-form .r-avs{max-height:180px;overflow:auto;margin:0}
+.mpick .mp-form .r-avs button{min-width:0;padding:0;background:none;border-radius:50%;border:3px solid transparent;display:block}
+.mpick .mp-form .r-avs button.on{border-color:var(--pri);background:none}
+.mpick .mp-form .btn{width:100%}
+.mp-full{margin:6px 0 0}

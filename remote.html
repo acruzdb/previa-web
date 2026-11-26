@@ -91,9 +91,30 @@ function mirrorTap(e){
 }
 function seatPicker(cls){
   const mine=st.seats.find(x=>x.by===me);
-  return '<div class="mpick '+(cls||"")+'"><b>'+(mine?_t("Eres ")+esc(mine.name):_t("¿Quién eres?"))+'</b><div>'+st.seats.map(x=>'<button data-n="'+esc(x.name)+'" class="'+(x.by===me?"on":"")+'" '+(x.by&&x.by!==me?"disabled":"")+'><img class="av" alt="" src="'+avatarURL(x.av)+'" style="border-color:'+x.color+'"><span>'+esc(x.name)+'</span>'+(x.by&&x.by!==me?"<small>📱</small>":"")+'</button>').join("")+'</div></div>';
+  return '<div class="mpick '+(cls||"")+'"><b>'+(mine?_t("Eres ")+esc(mine.name):_t("¿Quién eres?"))+'</b><div>'+st.seats.map(x=>'<button data-n="'+esc(x.name)+'" class="'+(x.by===me?"on":"")+'" '+(x.by&&x.by!==me?"disabled":"")+'><img class="av" alt="" src="'+avatarURL(x.av)+'" style="border-color:'+x.color+'"><span>'+esc(x.name)+'</span>'+(x.by&&x.by!==me?"<small>📱</small>":"")+'</button>').join("")+'</div>'+newSeatForm()+'</div>';
 }
-function bindPicker(root){root.querySelectorAll(".mpick button[data-n]").forEach(b=>b.onclick=()=>{send({t:"claim",name:b.dataset.n,key:myKey})})}
+// «No estoy en la lista»: el invitado escribe su nombre y elige avatar, y el anfitrión lo añade a su sala
+// (así cuenta en sus estadísticas). Solo antes de empezar y si el anfitrión lo permite (st.avs).
+let nw={open:false,name:ls.get("previa_net_name",""),av:null,focus:false,sent:false};
+function newSeatForm(){
+  if(!st||st.phase!=="lobby"||!st.avs||st.seats.some(x=>x.by===me))return "";
+  if(st.full)return '<p class="hint mp-full">'+_t("La sala está llena")+'</p>';
+  if(!nw.open)return '<button class="mp-new" type="button">➕ '+_t("No estoy en la lista")+'</button>';
+  const avs=st.avs.filter(id=>AVATARS.some(a=>a.id===id));if(!nw.av||avs.indexOf(nw.av)<0)nw.av=avs.indexOf(myAv)>=0?myAv:avs[0];
+  return '<div class="mp-form"><b>'+_t("Únete con tu nombre")+'</b><input id="mp-name" maxlength="14" placeholder="'+_t("Tu nombre")+'" value="'+esc(nw.name)+'">'+
+    '<div class="r-avs">'+avs.map(id=>'<button type="button" data-av="'+id+'" class="'+(id===nw.av?"on":"")+'"><img alt="" src="'+avatarURL(id)+'"></button>').join("")+'</div>'+
+    '<button class="btn primary" id="mp-go" type="button">'+(nw.sent?_t("Uniéndote…"):_t("Entrar en la sala"))+'</button></div>';
+}
+function bindPicker(root){root.querySelectorAll(".mpick button[data-n]").forEach(b=>b.onclick=()=>{nw.open=false;send({t:"claim",name:b.dataset.n,key:myKey})});
+  const nb=root.querySelector(".mp-new");if(nb)nb.onclick=()=>{nw.open=true;nw.focus=true;render()};
+  const inp=root.querySelector("#mp-name");
+  if(inp){inp.oninput=()=>{nw.name=inp.value};inp.onfocus=()=>{nw.focus=true};inp.onblur=()=>{nw.focus=false};
+    if(nw.focus){inp.focus();try{inp.setSelectionRange(inp.value.length,inp.value.length)}catch(e){}}}
+  root.querySelectorAll(".mp-form [data-av]").forEach(b=>b.onclick=()=>{nw.av=b.dataset.av;root.querySelectorAll(".mp-form [data-av]").forEach(x=>x.classList.toggle("on",x===b))});
+  const go=root.querySelector("#mp-go");if(go)go.onclick=()=>{const n=(nw.name||"").trim();if(!n){inp&&inp.focus();return}
+    ls.set("previa_net_name",n);ls.set("previa_net_av",nw.av);myAv=nw.av;nw.sent=true;go.textContent=_t("Uniéndote…");
+    send({t:"self",name:n,av:nw.av,key:myKey});setTimeout(()=>{nw.sent=false},4000)};
+}
 // ---------- impostor ----------
 let imUI={open:false,seen:false,round:0};
 function renderImpR(){
