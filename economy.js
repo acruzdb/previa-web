@@ -6,8 +6,8 @@
 // =====================================================================
 (function(root){
   const CFG={
-    START:50,          // monedas al instalar
-    AD_COINS:20,AD_DAY:3,       // vídeos con recompensa: los únicos anuncios de la app
+    START:200,         // monedas al instalar: con los 5 vídeos y el premio del primer día ya llega para un juego
+    AD_COINS:20,AD_DAY:5,       // vídeos con recompensa: los únicos anuncios de la app
     STREAK:[10,15,20,25,30,40,60], // premio diario según el día de la racha (ciclo de 7)
     LV_GAMES:5,LV_COINS:25,LV_MONTH:4, // nivel cada 5 partidas; 25 monedas por nivel, como mucho 4 niveles pagados al mes
     // dino corredor: solo se paga la PRIMERA vez que se llega a cada marca de 1000 m (para siempre),
@@ -15,33 +15,40 @@
     RUN_STEP:1000,RUN_BASE:1,RUN_MAX:10000,
     // Invasión (tema Gamer): cada nivel superado por primera vez da 2 puntos de experiencia de Gamer;
     // las monedas llegan al subir de nivel de Gamer (25 por nivel, máximo 4 niveles pagados al mes)
-    SI_XP:2
+    SI_XP:2,
+    // minijuegos de los temas (Tirar cañas en el Clásico, Sopa de letras en el Periódico y ¡POW! en el Cómic):
+    // como el dino, cada marca paga una sola vez y cada una un poco más (2, 3 … 11 = 65 en total por juego).
+    // step = cuántos niveles hay entre marca y marca
+    MG:{cana:{step:3},sopa:{step:1},pow:{step:1}},MG_MARKS:10
   };
-  // Profesiones es gratis; el resto de avatares va por packs
-  const FREE_AV=["bombero","bombero_m","policia","policia_m","chef","chef_m","profesor","cientifica","doctora","astronauta","detective"];
+  // Profesiones (12) es gratis; el resto de avatares va por packs de su categoría
+  const FREE_AV=["bombero","bombero_m","policia","policia_m","chef","chef_m","profesor","cientifica","doctora","astronauta","detective","futbolista"];
   // cada pack de cartas desbloquea mazos completos: [objeto, mazo, cartas gratis sin el pack]
   const ITEMS=[
-    {id:"hot",kind:"game",go:"hot-setup",price:300},
-    {id:"culo",kind:"game",go:"cg:culo",price:300},
-    {id:"bj",kind:"game",go:"cg:bj",price:400},
-    {id:"pk",kind:"game",go:"cg:pk",price:500},
-    // juegos nuevos: bloqueados por defecto (200 de momento)
-    {id:"imp",kind:"game",go:"imp-setup",price:200},
-    {id:"pc",kind:"game",go:"pc-setup",price:200},
-    {id:"geo",kind:"game",go:"tg:geo",price:200},
-    {id:"pueblo",kind:"game",go:"pueblo-setup",price:200},
+    // gratis: El Tablero, La Botella, Yo nunca, Pregúntame, Dibújalo y Cabeza de ron
+    {id:"hot",kind:"game",go:"hot-setup",price:500},
+    {id:"culo",kind:"game",go:"cg:culo",price:450},
+    {id:"bj",kind:"game",go:"cg:bj",price:600},
+    {id:"pk",kind:"game",go:"cg:pk",price:800},
+    {id:"imp",kind:"game",go:"imp-setup",price:350},
+    {id:"pc",kind:"game",go:"pc-setup",price:350},
+    {id:"geo",kind:"game",go:"tg:geo",price:300},
+    {id:"pueblo",kind:"game",go:"pueblo-setup",price:350},
+    {id:"mimica",kind:"game",go:"tg:mimica",price:300},
+    {id:"uno",kind:"game",go:"uno-setup",price:400},
+    {id:"tabu",kind:"game",go:"tg:tabu",price:350},
     // categorías sueltas: Pregúntame «Érase una vez», Palabra prohibida e Impostor
-    {id:"tr_anim",kind:"cat",game:"trivial",key:"anim",go:"tg:trivial",price:200},
-    ...["lugares","profesiones","deportes","fiesta","famosos","vida","conceptos"].map(k=>({id:"tc_"+k,kind:"cat",game:"tabu",key:k,go:"tg:tabu",price:100})),
-    ...["dibujos","peliculas","series","famosos","marcas","fiesta","videojuegos"].map(k=>({id:"ic_"+k,kind:"cat",game:"imp",key:k,go:"imp-setup",price:100})),
-    {id:"av_fantasia",kind:"avatars",cat:1,price:200,ids:["princesa","rey","mago","superheroe","vampiro","vampiro_m","zombi","ninja","sirena","elfo"]},
-    {id:"av_animales",kind:"avatars",cat:4,price:250,ids:["a_gato","a_perro","a_panda","a_zorro","a_conejo","a_oso","a_pinguino","a_rana","a_unicornio","a_leon","a_koala","a_tigre","a_pollito","a_dino"]},
-    {id:"av_aventura",kind:"avatars",cat:2,price:120,ids:["pirata","pirata_m","vikingo","vikingo_m","vaquero"]},
-    {id:"av_ocio",kind:"avatars",cat:3,price:150,ids:["rockera","dj","payaso","futbolista","surfera","gamer"]},
-    {id:"cp_fiesta",kind:"cards",go:"yn-setup",price:100,decks:[["YONUNCA","fiesta",0]]},
-    {id:"cp_salseo",kind:"cards",go:"yn-setup",price:100,decks:[["YONUNCA","salseo",0]]},
-    {id:"cp_tablero",kind:"cards",go:"board-setup",price:200,decks:[["BOARD","yonunca",40],["BOARD","bebe",40],["BOARD","reto",40],["BOARD","verdad",40],["BOARD","votacion",40],["BOARD","evento",40]]},
-    {id:"cp_botella",kind:"cards",go:"bottle-setup",price:120,decks:[["BOTELLA","verdad",40],["BOTELLA","reto",40]]},
+    {id:"tr_anim",kind:"cat",game:"trivial",key:"anim",go:"tg:trivial",price:300},
+    ...["lugares","profesiones","deportes","fiesta","famosos","vida","conceptos"].map(k=>({id:"tc_"+k,kind:"cat",game:"tabu",key:k,go:"tg:tabu",price:150})),
+    ...["dibujos","peliculas","series","famosos","marcas","fiesta","videojuegos"].map(k=>({id:"ic_"+k,kind:"cat",game:"imp",key:k,go:"imp-setup",price:150})),
+    // avatares temáticos (Halloween, piratas, oeste, vikingos, dino) guardados para packs de temas futuros
+    {id:"av_fantasia",kind:"avatars",cat:1,price:250,ids:["princesa","rey","superheroe","ninja","sirena","elfo"]},
+    {id:"av_ocio",kind:"avatars",cat:2,price:200,ids:["rockera","dj","payaso","surfera","gamer"]},
+    {id:"av_animales",kind:"avatars",cat:3,price:400,ids:["a_gato","a_perro","a_panda","a_zorro","a_conejo","a_oso","a_pinguino","a_rana","a_unicornio","a_leon","a_koala","a_tigre","a_pollito"]},
+    {id:"cp_fiesta",kind:"cards",go:"yn-setup",price:150,decks:[["YONUNCA","fiesta",0]]},
+    {id:"cp_salseo",kind:"cards",go:"yn-setup",price:150,decks:[["YONUNCA","salseo",0]]},
+    {id:"cp_tablero",kind:"cards",go:"board-setup",price:300,decks:[["BOARD","yonunca",40],["BOARD","bebe",40],["BOARD","reto",40],["BOARD","verdad",40],["BOARD","votacion",40],["BOARD","evento",40]]},
+    {id:"cp_botella",kind:"cards",go:"bottle-setup",price:200,decks:[["BOTELLA","verdad",40],["BOTELLA","reto",40]]},
     // temas de la app (el clásico oscuro/claro es gratis)
     {id:"th_periodico",kind:"theme",key:"periodico",go:"settings",price:150},
     {id:"th_comic",kind:"theme",key:"comic",go:"settings",price:150},
@@ -164,11 +171,21 @@ const allIn=W=>!!W.vip||!!W.pro;
   }
   // lo que queda por ganar en el dino y la siguiente marca
   function runNext(W){const k=(W.runMs|0)+1;return k>CFG.RUN_MAX/CFG.RUN_STEP?null:{m:k*CFG.RUN_STEP,coins:runMark(k)}}
+  // ---- minijuegos de los temas: monedas por marca de nivel, una sola vez ----
+  function mgReward(W,g,reached){
+    const c=CFG.MG[g];if(!c)return 0;if(!W.mg||typeof W.mg!=="object")W.mg={};
+    const k=Math.min(CFG.MG_MARKS,Math.floor(Math.max(0,reached|0)/c.step));
+    if((reached|0)>(W.mg[g+"Best"]|0))W.mg[g+"Best"]=reached|0;
+    let coins=0;for(let i=(W.mg[g]|0)+1;i<=k;i++)coins+=CFG.RUN_BASE+i;
+    W.mg[g]=Math.max(W.mg[g]|0,k);W.coins+=coins;return coins;
+  }
+  // siguiente marca: {lv (nivel que hay que superar), coins} o null si ya están todas
+  function mgNext(W,g){const c=CFG.MG[g];if(!c)return null;const k=((W.mg&&W.mg[g])|0)+1;return k>CFG.MG_MARKS?null:{lv:k*c.step,coins:CFG.RUN_BASE+k}}
   // experiencia de Gamer: partidas jugadas + 2 por cada nivel de Invasión superado
   function gamerXP(played,siBest){return (played|0)+CFG.SI_XP*(siBest|0)}
   function themeItem(key){return ITEMS.find(it=>it.kind==="theme"&&it.key===key)||null}
   function themeLocked(W,key){const it=themeItem(key);return !!it&&!owns(W,it.id)}
-  const E={allIn,unredeem,level,claimLevels,runReward,runNext,gamerXP,themeItem,themeLocked,sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem,catItem,catLocked};
+  const E={mgReward,mgNext,allIn,unredeem,level,claimLevels,runReward,runNext,gamerXP,themeItem,themeLocked,sha256,isVipCode,redeem,CFG,FREE_AV,ITEMS,item,dayKey,prevKey,load,roll,owns,streak,claim,adsLeft,rewardAd,buy,avLocked,avItem,deckLimit,deckItem,catItem,catLocked};
   if(typeof module!=="undefined"&&module.exports)module.exports=E;
   root.Economy=E;
 })(typeof window!=="undefined"?window:globalThis);

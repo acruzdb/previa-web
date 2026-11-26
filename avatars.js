@@ -241,10 +241,12 @@ window.avatarURL=function(id){
 
 // categorías para el selector
 window.AVATAR_CATS=[
- {n:_t("💼 Profesiones"),ids:["bombero","bombero_m","policia","policia_m","chef","chef_m","profesor","cientifica","doctora","astronauta","detective"]},
- {n:_t("🧙 Fantasía"),ids:["princesa","rey","mago","superheroe","vampiro","vampiro_m","zombi","ninja","sirena","elfo"]},
- {n:_t("⚔️ Aventura"),ids:["pirata","pirata_m","vikingo","vikingo_m","vaquero"]},
- {n:_t("🎉 Ocio y deporte"),ids:["rockera","dj","payaso","futbolista","surfera","gamer"]},
- {n:_t("🐾 Animales"),ids:["a_gato","a_perro","a_panda","a_zorro","a_conejo","a_oso","a_pinguino","a_rana","a_unicornio","a_leon","a_koala","a_tigre","a_pollito","a_dino"]}
+ {n:_t("💼 Profesiones"),ids:["bombero","bombero_m","policia","policia_m","chef","chef_m","profesor","cientifica","doctora","astronauta","detective","futbolista"]},
+ {n:_t("🧙 Fantasía"),ids:["princesa","rey","superheroe","ninja","sirena","elfo"]},
+ {n:_t("🎉 Ocio"),ids:["rockera","dj","payaso","surfera","gamer"]},
+ {n:_t("🐾 Animales"),ids:["a_gato","a_perro","a_panda","a_zorro","a_conejo","a_oso","a_pinguino","a_rana","a_unicornio","a_leon","a_koala","a_tigre","a_pollito"]}
 ];
+// avatares temáticos apartados para futuros packs de temas (Halloween, piratas, oeste, vikingos, dinosaurios):
+// no salen para elegir, pero se siguen dibujando si un jugador guardado ya los tenía
+window.AVATAR_HIDDEN=["mago","vampiro","vampiro_m","zombi","pirata","pirata_m","vikingo","vikingo_m","vaquero","a_dino"];
 })();

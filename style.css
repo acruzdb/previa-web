@@ -1825,7 +1825,9 @@ html[data-skin="periodico"] #s-home .lobby{padding:10px 6px 12px}
 html.noalc .na-hide{display:none!important}
 html.noalc .quick{grid-template-columns:1fr!important}
 html.noalc .na-drink{display:none!important}
-html.noalc .spl-mugs{visibility:hidden}
+/* sin alcohol: las jarras también chocan, pero de refresco */
+html.noalc #spl-beer stop:first-child{stop-color:#ff8a5c}
+html.noalc #spl-beer stop:last-child{stop-color:#d6336c}
 
 /* ===== Revisión de tamaños (v6.1) ===== */
 /* móviles plegables abiertos y tablets (pantalla táctil ancha): la app usa más ancho */
@@ -1877,17 +1879,16 @@ html.noalc .spl-mugs{visibility:hidden}
 
 /* ===== Logo de la portada con adorno según el tema ===== */
 #s-home .topbar .logo{position:relative}
-/* Dinosaurios: un hueso detrás del título y una cabeza de T-rex asomando */
+/* Dinosaurios: un hueso detrás del título */
 [data-skin="dinos"] #s-home .topbar .logo::before{content:"";position:absolute;left:4%;bottom:-9px;width:82%;height:18px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2080%2024%22%3E%3Cpath%20d%3D%22M14%208a6%206%200%201%201%202-6%206%206%200%200%201%206%206h36a6%206%200%200%201%206-6%206%206%200%201%201%202%206%206%206%200%201%201-2%208%206%206%200%200%201-6%206%206%206%200%200%201-6-6H22a6%206%200%200%201-6%206%206%206%200%200%201-2-6%206%206%200%201%201-2-8z%22%20fill%3D%22%23fff3d6%22%20stroke%3D%22%232b1d12%22%20stroke-width%3D%222.5%22%20stroke-linejoin%3D%22round%22%20transform%3D%22translate%280%202%29%22/%3E%3C/svg%3E") center/100% 100% no-repeat;transform:rotate(-3deg);z-index:-1}
-[data-skin="dinos"] #s-home .topbar .logo::after{content:"";position:absolute;right:-10px;top:-22px;width:34px;height:26px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2048%22%3E%3Cpath%20d%3D%22M6%2030c0-14%2010-24%2026-24h10c10%200%2018%206%2018%2015%200%204-2%207-6%207H40v4l8%202-1%205-10-1v4c0%204-3%206-7%206H18C11%2048%206%2040%206%2030z%22%20fill%3D%22%235fb341%22%20stroke%3D%22%232b1d12%22%20stroke-width%3D%223%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M40%2028l2%204%202-4%202%204%202-4%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2246%22%20cy%3D%2215%22%20r%3D%224.5%22%20fill%3D%22%23fff%22%20stroke%3D%22%232b1d12%22%20stroke-width%3D%222%22/%3E%3Ccircle%20cx%3D%2247%22%20cy%3D%2215%22%20r%3D%222%22%20fill%3D%22%232b1d12%22/%3E%3Cpath%20d%3D%22M14%2014l3-7%204%206M22%209l4-7%203%207%22%20fill%3D%22%23ffb703%22%20stroke%3D%22%232b1d12%22%20stroke-width%3D%222%22%20stroke-linejoin%3D%22round%22/%3E%3Ccircle%20cx%3D%2257%22%20cy%3D%2220%22%20r%3D%221.5%22%20fill%3D%22%232b1d12%22/%3E%3C/svg%3E") center/contain no-repeat;transform:rotate(12deg);animation:dn-nod 3.2s ease-in-out infinite;transform-origin:20% 90%}
-@keyframes dn-nod{0%,70%,100%{transform:rotate(12deg)}78%{transform:rotate(-4deg)}86%{transform:rotate(14deg)}}
+/* (título de Dinosaurios: solo el hueso, sin la cabeza de T-rex) */
 /* Gamer: una nave que vigila y un marciano escondido detrás de la «A» */
 [data-skin="arcade"] #s-home .topbar .logo::before{content:"";position:absolute;right:-6px;top:-13px;width:18px;height:19px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22-14%20-16%2028%2030%22%3E%3Cpath%20d%3D%22M-10%206v-8Q0-14%2010-2v8l-5-4-5%204-5-4z%22%20fill%3D%22%23ff2e88%22/%3E%3Cpath%20d%3D%22M0-8v-5%22%20stroke%3D%22%23ff2e88%22%20stroke-width%3D%222%22/%3E%3Ccircle%20cy%3D%22-14%22%20r%3D%222%22%20fill%3D%22%23ff2e88%22/%3E%3Ccircle%20cy%3D%22-1%22%20r%3D%224.2%22%20fill%3D%22%230b0d10%22/%3E%3Ccircle%20cx%3D%221%22%20cy%3D%22-1%22%20r%3D%221.8%22%20fill%3D%22%23ff2e88%22/%3E%3C/svg%3E") center/contain no-repeat;animation:gm-peek 4s ease-in-out infinite}
 [data-skin="arcade"] #s-home .topbar .logo::after{content:"";position:absolute;left:-2px;bottom:-12px;width:20px;height:17px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%22-18%20-18%2036%2030%22%3E%3Cpath%20d%3D%22M0-16%205-6%2016%202v6h-32V2L-5-6z%22%20fill%3D%22%23c6ff00%22/%3E%3Cpath%20d%3D%22M0-9%203-3h-6z%22%20fill%3D%22%230b0d10%22/%3E%3Crect%20x%3D%22-12%22%20y%3D%228%22%20width%3D%225%22%20height%3D%223%22%20fill%3D%22%2300e5ff%22/%3E%3Crect%20x%3D%227%22%20y%3D%228%22%20width%3D%225%22%20height%3D%223%22%20fill%3D%22%2300e5ff%22/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 0 4px #c6ff00);animation:gm-fly 6s linear infinite}
 @keyframes gm-peek{0%,60%,100%{transform:translateY(6px);opacity:0}68%,90%{transform:translateY(0);opacity:1}}
 @keyframes gm-fly{0%{transform:translateX(0)}50%{transform:translateX(calc(100% + 80px))}100%{transform:translateX(0)}}
 @media (prefers-reduced-motion:reduce){[data-skin] #s-home .topbar .logo::before,[data-skin] #s-home .topbar .logo::after{animation:none}}
-@media (max-width:380px){[data-skin="dinos"] #s-home .topbar .logo::after{right:-8px;top:-18px;width:28px;height:21px}}
+
 /* ===== Mejoras de uso (v6.2) ===== */
 .quickgo{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:0 0 12px;padding:12px 14px;border:0;border-radius:16px;text-align:left;cursor:pointer;color:#fff;font:inherit;
   background:linear-gradient(120deg,var(--pri),var(--pri2));box-shadow:0 8px 20px rgba(255,46,136,.25)}
@@ -1959,3 +1960,6 @@ html:not([data-skin]) .qbtn.surprise b,html:not([data-skin]) .qbtn.surprise smal
 :root[data-theme="light"]:not([data-skin]) .coinchip b{color:#92400e}
 :root[data-theme="light"]:not([data-skin]) .seg button.on small{color:#4a4360}
 [data-skin="arcade"] .gm-tile b{text-shadow:0 1px 3px rgba(0,0,0,.75)}
+/* v6.5: iconos de arriba (Estadísticas, Cartas, Ajustes) centrados en todos los temas:
+   sin relleno ni espaciado de letras (el Cómic usa Bangers con letter-spacing) y el emoji en una caja cuadrada */
+html #s-home .topbtns .icon{padding:0!important;letter-spacing:0!important;line-height:1!important;text-indent:0!important;text-align:center;display:grid!important;place-items:center!important;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif!important}
